@@ -47,23 +47,6 @@ emits the natural-language modules from the artifacts.
 - The handoff packet at step 6 is the only artifact passed forward.
   No tacit context.
 
-## Authority compliance
-
-The canonical specification for the SKILL.md container is
-`agentskills.io` (the same authority cited from
-`assets/primitives.md` for MODULE ENTRYPOINT). Treat its four
-skill-creation pages as load-bearing input, not background reading:
-
-- https://agentskills.io/skill-creation/best-practices
-- https://agentskills.io/skill-creation/optimizing-descriptions
-- https://agentskills.io/skill-creation/evaluating-skills
-- https://agentskills.io/skill-creation/using-scripts
-
-Truth #5 (PRETRAINING IS FROZEN) applies to this spec: do not rely on
-recalled "what skills look like." If a step below references a hard
-limit (length cap, layout rule, eval requirement) and the spec has
-moved since training cutoff, fetch the live page rather than memory.
-
 ## Process
 
 ```
@@ -112,9 +95,10 @@ boundary, and the intended invocation mode (FORCED | DISCOVERY |
 BOTH). This is the function signature the dispatcher LLM matches
 against; see the persona's "Skill dispatch" section.
 
-The description follows four rules from the agentskills.io
-optimizing-descriptions page (verify against the live URL per
-"Authority compliance"):
+The description follows four rules from the canonical spec for the
+MODULE ENTRYPOINT primitive (see `assets/primitives.md` -- the
+agentskills.io optimizing-descriptions page is the load-bearing
+authority; verify against the live URL):
 
 - IMPERATIVE phrasing. Frame as an instruction to the agent: "Use
   this skill when ..." rather than declarative "This skill does ...".
@@ -122,8 +106,9 @@ optimizing-descriptions page (verify against the live URL per
   achieve, not the skill's internal procedure.
 - INDIRECT TRIGGERS named. List contexts where the skill applies
   EVEN IF the user does not name the domain directly. Be pushy.
-- LENGTH CAP <= 1024 characters (agentskills.io spec hard limit;
-  silent rejection above this).
+- LENGTH CAP <= 1024 characters (canonical spec hard limit per
+  `assets/primitives.md` MODULE ENTRYPOINT; silent rejection above
+  this).
 
 ### Step 2 - component diagram (mermaid)
 
@@ -223,8 +208,9 @@ Scope, Orchestrated Composition, Safety Boundaries, Explicit
 Hierarchy) and the seven durable LLM truths. Any BLOCKER stops
 the design; return to step 2.
 
-Also enforce the agentskills.io spec compliance row (BLOCKER on any
-miss; verify against the live spec):
+Also enforce the MODULE ENTRYPOINT canonical spec compliance row
+(BLOCKER on any miss; verify against the live spec linked from
+`assets/primitives.md`):
 
 - `name` field is 1-64 characters, lowercase `[a-z0-9-]`, no
   leading / trailing / consecutive hyphens, AND equals the parent
@@ -253,8 +239,9 @@ Produce a single artifact containing:
 - Any compliance findings still open (with severity).
 - A todo list (one entry per module to draft, plus validation),
   with dependencies between entries where they exist.
-- An EVALS PLAN (agentskills.io evaluating-skills + optimizing-
-  descriptions). At minimum:
+- An EVALS PLAN (canonical spec for MODULE ENTRYPOINT primitive
+  evaluating-skills + optimizing-descriptions; see
+  `assets/primitives.md`). At minimum:
   - 2-3 CONTENT EVALS: prompt + expected output, to be exercised
     twice (with the skill loaded and without it) so the value
     delta is visible. If `with_skill` and `without_skill` produce
@@ -310,8 +297,9 @@ usage skill (today: APM via the `apm-usage` skill) for manifest /
 CLI / lockfile syntax. The architect persona stays ignorant of
 that syntax; the coder thread learns it on demand.
 
-Use the agentskills.io canonical directory layout for any bundled
-content (verify the spec at the URLs in "Authority compliance"):
+Use the canonical directory layout for any bundled content (the
+MODULE ENTRYPOINT spec linked from `assets/primitives.md` is the
+source of truth; verify if anything has moved):
 
 - `scripts/` - executable programs invoked by the skill body via
   RELATIVE path. Must be NON-INTERACTIVE (agents run in shells with

@@ -38,6 +38,32 @@ A bundled, self-contained capability with its own assets and a contract
 INDUSTRY TERMS: "skill" ([agentskills.io](https://agentskills.io)),
 "plugin", "command bundle".
 
+CANONICAL SPEC. The agentskills.io project is the canonical authority
+for the SKILL.md container surface. Treat the four skill-creation pages
+as load-bearing input rather than background reading. Truth #5
+(pretraining is frozen) applies: fetch live rather than recall.
+
+- https://agentskills.io/skill-creation/best-practices
+  -> body content, gotchas, output templates, calibrating
+     prescriptiveness, procedures over declarations, refine-with-
+     execution, real-expertise sourcing.
+- https://agentskills.io/skill-creation/optimizing-descriptions
+  -> imperative phrasing, user-intent framing, indirect-trigger
+     ("be pushy") clauses, 1024-character hard cap on `description`,
+     trigger-eval split (~20 queries 60/40 train/val).
+- https://agentskills.io/skill-creation/evaluating-skills
+  -> `evals/evals.json` schema, with-skill vs without-skill baseline,
+     iteration workspace, when assertions land.
+- https://agentskills.io/skill-creation/using-scripts
+  -> `scripts/` directory conventions, version pinning,
+     non-interactive shell requirement, `--help` doc, structured
+     stdout vs diagnostic stderr.
+- https://agentskills.io/specification
+  -> `name` regex (1-64 chars, `[a-z0-9-]`, must equal parent dir),
+     directory layout (`scripts/` + `references/` + `assets/`),
+     SKILL.md body budget (<= 500 lines AND <= 5000 tokens; overflow
+     to `references/` with explicit load-trigger phrasing).
+
 WHEN TO USE: a capability that needs its own dispatch trigger, may be
 invoked discoverably by the harness's dispatcher, and bundles assets
 that should not pollute the parent context until needed.
