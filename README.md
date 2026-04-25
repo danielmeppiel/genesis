@@ -1,77 +1,86 @@
 <p align="center">
-  <img src="assets/branding/hero.svg" alt="genesis: substrate for agentic primitives" width="600" />
+  <img src="assets/branding/hero.svg" alt="Five different harness folder conventions are the same primitive: PERSONA SCOPING FILE. genesis-skill names the substrate once." width="720" />
 </p>
 
 <h1 align="center">genesis-skill</h1>
 
 <p align="center">
-  <strong>In the beginning was the prompt.</strong>
+  <strong>Markdown that steers an LLM is code. Design it before you write it.</strong>
 </p>
 
 <p align="center">
-  <em>The first-principles substrate for designing agentic primitives. From PROSE.</em>
+  <sub>By <a href="https://github.com/danielmeppiel">Daniel Meppiel</a> &mdash; creator of <a href="https://github.com/microsoft/apm">APM</a> and the PROSE framework, author of <a href="https://github.com/danielmeppiel/agentic-sdlc-handbook"><em>The Agentic SDLC Handbook</em></a>.</sub>
 </p>
 
 <p align="center">
+  <a href="https://agentskills.io"><img src="https://img.shields.io/badge/agentskills.io-spec-blue?style=flat" alt="agentskills.io"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/danielmeppiel/genesis-skill?style=flat" alt="License"></a>
   <a href="https://github.com/danielmeppiel/genesis-skill/stargazers"><img src="https://img.shields.io/github/stars/danielmeppiel/genesis-skill?style=flat&color=yellow" alt="Stars"></a>
   <a href="https://github.com/danielmeppiel/genesis-skill/commits/main"><img src="https://img.shields.io/github/last-commit/danielmeppiel/genesis-skill?style=flat" alt="Last Commit"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/danielmeppiel/genesis-skill?style=flat" alt="License"></a>
-  <a href="https://agentskills.io"><img src="https://img.shields.io/badge/agentskills.io-spec-blue?style=flat" alt="agentskills.io"></a>
 </p>
 
 <p align="center">
-  <a href="#why">Why</a> &middot;
-  <a href="#what-genesis-gives-you">What</a> &middot;
+  <a href="#the-shift">The shift</a> &middot;
+  <a href="#the-hook">A worked failure</a> &middot;
   <a href="#install">Install</a> &middot;
   <a href="#the-substrate">Substrate</a> &middot;
+  <a href="#the-patterns">Patterns</a> &middot;
   <a href="#the-discipline">Discipline</a> &middot;
   <a href="#works-with">Targets</a>
 </p>
 
-<p align="center">
-  <strong>Genesis Trinity</strong> &nbsp;&middot;&nbsp;
-  <strong>PROSE</strong> <em>the language</em> &nbsp;&middot;&nbsp;
-  <strong>genesis-skill</strong> <em>the substrate</em> <sub>(you are here)</sub> &nbsp;&middot;&nbsp;
-  <a href="https://github.com/danielmeppiel/agentic-sdlc-handbook"><strong>Handbook</strong></a> <em>the canon</em>
-</p>
+---
+
+Most agent skills, agents, and instruction files are written like prose for humans. They are not. They are **code for an inferencing engine** with a finite context window, an attention drop-off, and a probabilistic output distribution. Without an architectural discipline they dilute into context bloat, cross-contaminated lenses, and quietly drifting outputs.
+
+`genesis-skill` is the design discipline that comes before authoring. It teaches your agent to think like a software architect first: **name the substrate, choose a pattern, draw the diagram, persist the plan &mdash; then write the file.**
+
+## The shift
+
+Authoring agentic primitives is no longer a writing job. It is an architecture job. *The Agentic SDLC Handbook* names the role transition explicitly:
+
+> "AI is a capable but amnesiac engineer that needs explicit context to do useful work."  
+> &mdash; *The Agentic SDLC Handbook*, [ch 8: The Practitioner's Mindset](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch08-the-practitioners-mindset.qmd)
+
+Three roles fall out of that observation:
+
+- **Architect** &mdash; you design the work before any agent writes a line. You decide which primitives exist, how they compose, and which run in their own threads.
+- **Reviewer** &mdash; you verify the output against an acceptance criterion you wrote *before* you saw the result.
+- **Escalation handler** &mdash; you absorb the cases the agent cannot, with enough context loaded to be useful.
+
+Genesis is the discipline you apply when you are wearing the architect hat. It gives you a vocabulary, a pattern catalogue, a composition model, and a persisted-plan loop &mdash; because **LLMs forget**: as a session's context fills, attention to the early turns degrades, and the cure is an external plan the architect reloads at every re-grounding boundary.
+
+## The hook
+
+You design a "review panel" skill: five expert lenses run sequentially in one context window, each persona file loaded in turn, each set of findings accumulated in working notes, then a sixth arbiter persona synthesizes the verdict.
+
+By the arbiter's turn the window contains the orchestrator wrapper, five persona files, five sets of findings, the arbiter persona, and the output template. The first persona's instructions sit thousands of tokens behind the focus point. The lenses have cross-contaminated &mdash; each one read the previous ones' findings because they share a window. The synthesis runs at the deepest point of attention degradation.
+
+This is **pattern P2** &mdash; *fan-out + parent synthesizer* &mdash; applied as if it were P1. Each lens should spawn into its own fresh context. The parent should be the only writer to the output sink. The arbiter should run on a fresh thread loaded with structured returns, not on a thread that has played five other roles.
+
+**[Read the full re-architecture &rarr;](assets/worked-example-review-panel.md)**
+
+## Install
+
+Install via [APM](https://github.com/microsoft/apm) (one line) or drop the files into your harness's skills folder:
+
+```bash
+# APM users
+echo "  - danielmeppiel/genesis-skill" >> apm.yml   # under dependencies.modules
+apm install
+```
+
+Then ask your agent:
+
+> *"Use the genesis-architect persona and the genesis-skill discipline to design a [thing you want]."*
+
+The agent will produce: a goal statement, a substrate-named breakdown, a justified pattern choice, a mermaid UML, an acceptance criterion, and a persisted plan &mdash; before writing a single primitive file.
 
 ---
 
-Most agent skills, agents, and instruction files are written like prose for humans. They are not. They are **code for an inferencing engine** with a finite context window, an attention drop-off, and a probabilistic output distribution. Without an architectural discipline, your agentic primitives are spaghetti markdown that bloats context and confuses the runtime.
-
-`genesis-skill` is the missing layer. It teaches your agent to **think like a software architect** before it writes a single skill file: name the substrate, choose a pattern, draw the diagram, persist the plan, then implement.
-
-## Why
-
-You ship a single 4000-token skill file that does six things. Your agent loads the whole file just to do one of them. Context fills. Attention degrades. Outputs drift.
-
-A teammate asks: "what's the difference between an agent file, a skill, and an instruction file?" You don't have a vocabulary to answer because nobody has one yet. Each harness invents its own folder names. The substrate is the same. The words aren't.
-
-You design a "review panel" skill that runs five expert lenses one after the other in the same context window. They contaminate each other. The output is a mush. You realize too late you should have spawned five threads.
-
-These are not skill-writing problems. They are **architecture** problems. Genesis is the architect.
-
-## What genesis gives you
-
-```
-+----------------------------------------------------------+
-|  CONCEPT VOCABULARY      ###############  18 named terms |
-|  ARCHITECTURE PATTERNS   ###############   8 patterns    |
-|  HARNESS COVERAGE        ###############   5 adapters    |
-|  DESIGN STEPS            ###############   8 steps       |
-|  OPINIONS                ###############   strong        |
-+----------------------------------------------------------+
-```
-
-- **A shared vocabulary** for every primitive across every harness (PERSONA SCOPING FILE, MODULE ENTRYPOINT, SCOPE-ATTACHED RULE FILE, CHILD-THREAD SPAWN, TRIGGER ORCHESTRATOR, PLAN PERSISTENCE).
-- **A composition mental model** so your skill can depend on other skills, not duplicate them (MODULE, DEPENDENCY, TRANSITIVE CLOSURE, VERSION PINNING, PORTABILITY MODE).
-- **Eight reusable patterns** (P1 fan-out subagents, P2 router, P3 specialist hand-off, P4 atomic interlock, P5 isolation chamber, P6 cascading scope rules, P7 shared-substrate adapters, P8 plan-first persisted).
-- **An eight-step design discipline** that ends with a UML diagram and a persisted plan, not vibes.
-- **Five harness adapters** (Claude Code, Codex, Copilot, Cursor, OpenCode) that map the substrate onto each runtime's actual file names and folders.
-
 ## The substrate
 
-Six concepts the architect always uses. Every harness implements them under different names. Genesis names them once.
+Six concepts the architect always uses. Every harness implements them under different folder names. Genesis names them once.
 
 | Concept | What it is | Industry term |
 |---|---|---|
@@ -84,37 +93,43 @@ Six concepts the architect always uses. Every harness implements them under diff
 
 These names are deliberately generic. The discipline must outlive any one tool.
 
+The composition model adds five more concepts (MODULE, DEPENDENCY, TRANSITIVE CLOSURE, VERSION PINNING, PORTABILITY MODE) and names the recurring failure modes it prevents &mdash; **DUPLICATED LEAF** (the same paragraph copy-pasted across N primitives) and **TRANSITIVE BLOAT** (a thin wrapper module pulling in a heavy dependency closure). See [`assets/composition-substrate.md`](assets/composition-substrate.md).
+
+## The patterns
+
+Eight reusable topologies the architect picks from. P8 is orthogonal to the rest &mdash; combine it with whichever topology fits.
+
+| # | Name | When |
+|---|---|---|
+| **P1** | Single-loop sequential | One lens, one procedure |
+| **P2** | Fan-out + parent synthesizer | >= 3 independent lenses, no shared state |
+| **P3** | Conditional dispatch | Single lens, procedure depends on input class |
+| **P4** | Validation gate | Output verifiable before it proceeds |
+| **P5** | Supervisor / worker | Long task, dynamic plan, bounded delegation |
+| **P6** | Orchestrator + persisted artifact | Work spans multiple trigger events |
+| **P7** | Composed module (depend, don't duplicate) | A primitive you need already exists |
+| **P8** | Plan-first with persisted plan | *Orthogonal:* combine whenever attention decay risks the work |
+
+Full catalogue with mermaid sketches, interlock requirements, anti-patterns, and a selection heuristic: [`assets/architecture-patterns.md`](assets/architecture-patterns.md).
+
 ## The discipline
 
+The architect's loop. Eight steps; the persisted plan is non-negotiable.
+
 ```
-1. STATE GOAL          --> one sentence, observable outcome
-2. NAME SUBSTRATE      --> which concepts will you use?
-3. PICK PATTERN        --> P1..P8, justify in one line
-3.5 COMPOSE OR BUILD?  --> can an existing module satisfy this?
-4. DRAW UML            --> mermaid, validate it renders
-5. ACCEPTANCE          --> what proves it works?
-6. PERSIST PLAN        --> write plan.md (or equivalent) BEFORE coding
-7. IMPLEMENT           --> author files; commit
-7b. RELOAD PLAN        --> on every meaningful turn, re-read the plan
-8. STOP CONDITION      --> ship, or kill the design
+1.  STATE GOAL          --> one sentence, observable outcome
+2.  NAME SUBSTRATE      --> which concepts will you use?
+3.  PICK PATTERN        --> P1..P8, justify in one line
+3.5 COMPOSE OR BUILD?   --> can an existing module satisfy this?
+4.  DRAW UML            --> mermaid, validate it renders
+5.  ACCEPTANCE          --> what proves it works?
+6.  PERSIST PLAN        --> write plan.md (or equivalent) BEFORE coding
+7.  IMPLEMENT           --> author files; commit
+7b. RELOAD PLAN         --> on every meaningful turn, re-read the plan
+8.  STOP CONDITION      --> ship, or stop the design
 ```
 
-The persisted plan is non-negotiable. **LLMs forget.** As context fills, attention to the early turns degrades. The plan is the external memory the architect reloads to stay grounded. This discipline is the same one Claude Code, Cursor, and Copilot all reinvented internally; Genesis names it once.
-
-## Install
-
-`genesis-skill` is an [agentskills.io](https://agentskills.io) skill bundled with a companion persona file. Install via your harness's standard mechanism, or via [APM](https://github.com/microsoft/apm):
-
-| Tool | Install |
-|---|---|
-| **APM** | Add `danielmeppiel/genesis-skill` to `apm.yml` dependencies, then `apm install` |
-| **Manual** | Clone repo, drop `SKILL.md` into your harness's skills folder, `agents/genesis-architect.agent.md` into the agents/personas folder |
-
-After install, ask your agent:
-
-> "Use the genesis-architect persona and the genesis-skill discipline to design a [thing you want]."
-
-The agent will produce: a goal statement, a substrate-named breakdown, a justified pattern choice, a mermaid UML, an acceptance criterion, and a persisted plan -- before writing a single primitive file.
+Steps 6 and 7b cure the amnesia. Without the reload, the persistence is dead weight; without the persistence, the reload has nowhere to ground. Claude Code, Cursor, and Copilot all reinvented this loop internally. Genesis names it once.
 
 ## Works with
 
@@ -130,14 +145,23 @@ The substrate is the same. Only the file names change.
 
 ## Read the canon
 
-This skill is the executable companion to **[The Agentic SDLC Handbook](https://github.com/danielmeppiel/agentic-sdlc-handbook)** and a working application of the **PROSE Framework**. The Handbook gives you the theory. Genesis gives your agent the discipline. PROSE is the language they share.
+`genesis-skill` is the executable companion to *[The Agentic SDLC Handbook](https://github.com/danielmeppiel/agentic-sdlc-handbook)* &mdash; specifically:
+
+- [ch 8: The Practitioner's Mindset](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch08-the-practitioners-mindset.qmd) &mdash; the role-shift to architect / reviewer / escalation handler.
+- [ch 10: The PROSE Specification](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch10-the-prose-specification.qmd) &mdash; the constraint language each substrate concept maps to.
+- [ch 11: Context Engineering](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch11-context-engineering.qmd) &mdash; why MODULE ENTRYPOINT, CHILD-THREAD SPAWN, and PLAN PERSISTENCE exist.
+- [ch 12: Multi-Agent Orchestration](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch12-multi-agent-orchestration.qmd) &mdash; the theory the eight patterns implement.
+
+Each substrate concept earns its place against PROSE: lazy assets in MODULE ENTRYPOINT are *Progressive Disclosure*; CHILD-THREAD SPAWN is *Reduced Scope*; pattern P7 is *Orchestrated Composition*; P4 is *Safety Boundaries*; cascading SCOPE-ATTACHED RULE FILEs are *Explicit Hierarchy*.
+
+The Handbook gives you the methodology. PROSE gives you the constraint language. Genesis gives your agent the discipline. [APM](https://github.com/microsoft/apm) gives you the package manager.
 
 ## License
 
-MIT. Use it, fork it, ship it. If it makes your agents better, let me know on [GitHub](https://github.com/danielmeppiel).
+MIT. If this changes how you design agent primitives, I want to hear about it &mdash; find me on [GitHub](https://github.com/danielmeppiel) or [LinkedIn](https://www.linkedin.com/in/danielmeppiel/).
 
 ---
 
 <p align="center">
-  <em>"Six concepts. Eight patterns. One substrate. Then write the skill."</em>
+  <em>"Architect first. Then write the skill."</em>
 </p>
