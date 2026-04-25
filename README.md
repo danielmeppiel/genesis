@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <sub>By <a href="https://github.com/danielmeppiel">Daniel Meppiel</a> &mdash; creator of <a href="https://github.com/microsoft/apm">APM</a> and the PROSE framework, author of <a href="https://github.com/danielmeppiel/agentic-sdlc-handbook"><em>The Agentic SDLC Handbook</em></a>.</sub>
+  <sub>By <a href="https://github.com/danielmeppiel">Daniel Meppiel</a> &mdash; creator of <a href="https://github.com/microsoft/apm">APM</a> and the <a href="https://danielmeppiel.github.io/awesome-ai-native/">PROSE framework</a>, author of <a href="https://github.com/danielmeppiel/agentic-sdlc-handbook"><em>The Agentic SDLC Handbook</em></a>.</sub>
 </p>
 
 <p align="center">
@@ -152,9 +152,9 @@ The substrate is the same. Only the file names change.
 - [ch 11: Context Engineering](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch11-context-engineering.qmd) &mdash; why MODULE ENTRYPOINT, CHILD-THREAD SPAWN, and PLAN PERSISTENCE exist.
 - [ch 12: Multi-Agent Orchestration](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch12-multi-agent-orchestration.qmd) &mdash; the theory the eight patterns implement.
 
-Each substrate concept earns its place against PROSE: lazy assets in MODULE ENTRYPOINT are *Progressive Disclosure*; CHILD-THREAD SPAWN is *Reduced Scope*; pattern P7 is *Orchestrated Composition*; P4 is *Safety Boundaries*; cascading SCOPE-ATTACHED RULE FILEs are *Explicit Hierarchy*.
+Each substrate concept earns its place against [PROSE](https://danielmeppiel.github.io/awesome-ai-native/): lazy assets in MODULE ENTRYPOINT are *Progressive Disclosure*; CHILD-THREAD SPAWN is *Reduced Scope*; pattern P7 is *Orchestrated Composition*; P4 is *Safety Boundaries*; cascading SCOPE-ATTACHED RULE FILEs are *Explicit Hierarchy*.
 
-The Handbook gives you the methodology. PROSE gives you the constraint language. Genesis gives your agent the discipline. [APM](https://github.com/microsoft/apm) gives you the package manager.
+The Handbook gives you the methodology. [PROSE](https://danielmeppiel.github.io/awesome-ai-native/) gives you the constraint language. Genesis gives your agent the discipline. [APM](https://github.com/microsoft/apm) gives you the package manager.
 
 ## License
 
