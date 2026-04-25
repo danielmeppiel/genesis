@@ -47,7 +47,7 @@ Genesis produces this **before** writing any file:
 - `CHILD-THREAD SPAWN` &times; 3 &mdash; one per lens (tests, docs, migrations), so each runs in a fresh context window.
 - `PLAN PERSISTENCE` &mdash; findings written to `pr-review.md` so a re-run on the same PR is comparable.
 
-**PATTERN.** **P2** (fan-out + parent synthesizer). The three lenses are independent and share no state; running them in one window cross-contaminates voice and dilutes attention. Justified.
+**PATTERN.** **Master-Worker** (genesis name: FAN-OUT + SYNTHESIZER). The parent skill spawns one worker per lens, each in a fresh context window, and synthesizes their findings into one verdict. Independent inquiries with no shared state should never compete in the same window &mdash; later lenses inherit attention drift from earlier ones.
 
 **UML.**
 
@@ -125,22 +125,48 @@ A composition layer sits on top &mdash; how primitives depend on each other, ver
 
 ## Patterns
 
-Eight reusable topologies the architect picks from. P8 is orthogonal to the rest &mdash; combine it with whichever topology fits.
+Genesis maps the Gang-of-Four axes onto agent design. The classical name on the left is your Rosetta Stone; the AI-native name on the right is the working term that names the LLM-physics specifics (context isolation, dispatcher signatures, attention decay).
 
-| # | Name | When |
+**Design patterns** &mdash; cut on the GoF axes. The shape of one piece of work.
+
+| GoF axis | Classical pattern | AI-native name | When |
+|---|---|---|---|
+| Creational | Lazy Initialization | LAZY ASSET | A skill bundles knowledge that only some calls need |
+| Creational | Constructor | PERSONA PRELOAD | A thread needs a stable lens for its session |
+| Creational | Factory Method | THREAD SPAWN | Work benefits from a fresh context window |
+| Creational | Service Locator | DESCRIPTION DISPATCH | The harness's dispatcher matches signatures probabilistically |
+| Creational | Prototype | PERSONA PROTOTYPE | Several lenses differ only in narrow parameters |
+| Structural | Composite | COMPOSED MODULE | An orchestrator loads existing modules instead of re-inlining them |
+| Structural | Adapter | DEPENDENCY ADAPTER | The architect reasons against an abstract substrate; concrete syntax lives in adapters |
+| Structural | Facade | ORCHESTRATOR FACADE | A multi-step capability needs to look like one callable signature |
+| Structural | Decorator | VALIDATION DECORATOR | A produced artifact must clear a deterministic gate |
+| Structural | Proxy | LAZY PROXY | A reference stands in for content materialized only when needed |
+| Structural | Bridge | RULE BRIDGE | Cross-cutting rules vary independently from personas |
+| Behavioral | Master-Worker | FAN-OUT + SYNTHESIZER | >=3 independent lenses with no shared state |
+| Behavioral | Strategy | CONDITIONAL DISPATCH | Procedure choice depends on input class |
+| Behavioral | Mediator | SUPERVISOR | Long task with a dynamic plan and bounded delegation |
+| Behavioral | Memento | PLAN MEMENTO | Externalize plan + acceptance state so it survives turns and spawns |
+| Behavioral | Observer | ACCEPTANCE OBSERVER | Final gate: criterion observed, implementation compared |
+| Behavioral | Template Method | PROMPT TEMPLATE | Many capabilities share a skeleton; differ in narrow slots |
+| Behavioral | Command | TODO COMMAND | Decompose intent into dispatchable, replayable units |
+| Behavioral | *(no classical analog)* | **ATTENTION ANCHOR** | Re-inject the goal and hard constraints at every re-grounding boundary |
+
+ATTENTION ANCHOR is the LLM-physics-native pattern with no faithful classical counterpart. It is also the single most important behavioral pattern for any non-trivial agent task: without periodic re-injection of the goal and hard constraints, long sessions silently drift from the original intent. It composes with PLAN MEMENTO (the storage substrate) and ACCEPTANCE OBSERVER (the final gate that reads the same anchor).
+
+Full design-pattern catalogue with mermaid sketches, mechanisms, and anti-patterns: [`assets/design-patterns.md`](assets/design-patterns.md).
+
+**Architectural patterns** &mdash; the system shape. They compose several design patterns plus substrate primitives.
+
+| Classical analog | AI-native name | When |
 |---|---|---|
-| **P1** | Single-loop sequential | One lens, one procedure |
-| **P2** | Fan-out + parent synthesizer | >= 3 independent lenses, no shared state |
-| **P3** | Conditional dispatch | Single lens, procedure depends on input class |
-| **P4** | Validation gate | Output verifiable before it proceeds |
-| **P5** | Supervisor / worker | Long task, dynamic plan, bounded delegation |
-| **P6** | Orchestrator + persisted artifact | Work spans multiple trigger events |
-| **P7** | Composed module (depend, don't duplicate) | A primitive you need already exists |
-| **P8** | Plan-first with persisted plan | *Orthogonal:* combine whenever attention decay risks the work |
+| Microservices + Gateway | PANEL | Multi-lens deliberation with a synthesis decision |
+| Pipes-and-Filters | PIPELINE | Ordered stages with verifiable hand-offs (e.g. plan / tasks / implement) |
+| Saga | ORCHESTRATOR-SAGA | Multi-trigger work where partial completion is meaningful state |
+| Workflow Engine | STAFFED PLAN | A plan with per-task persona / skill assignment |
+| Build Pipeline (CI) | WAVE EXECUTION | A non-trivial task DAG with gates between waves |
+| Event-Driven Architecture | EVENT-DRIVEN | Reactive handlers wired to external triggers |
 
-Full catalogue with mermaid sketches, interlock requirements, anti-patterns, and a selection heuristic: [`assets/design-patterns.md`](assets/design-patterns.md).
-
-P1-P9 are atomic. Recurring *compositions* of them &mdash; PANEL, STAFFED PLAN, WAVE EXECUTION, PLAN/TASKS/IMPLEMENT PIPELINE, RUBBER-DUCK ACCEPTANCE &mdash; live in [`assets/architectural-patterns.md`](assets/architectural-patterns.md). They are the AI-native equivalent of architectural patterns (MVC, CQRS) over class-level patterns.
+Full architectural-pattern catalogue: [`assets/architectural-patterns.md`](assets/architectural-patterns.md). Source-time refactoring (split, fuse, extract, inline) is in [`assets/refactor-patterns.md`](assets/refactor-patterns.md).
 
 ## Process
 
@@ -148,8 +174,8 @@ The architect's loop. Eight steps; the persisted plan is non-negotiable.
 
 ```
 1.  STATE GOAL          --> one sentence, observable outcome
-2.  NAME PRIMITIVES     --> which concepts will you use?
-3.  PICK PATTERN        --> P1..P8, justify in one line
+2.  NAME PRIMITIVES     --> which substrate concepts will you use?
+3.  PICK PATTERN        --> architectural shape, then design patterns; justify in one line
 3.5 COMPOSE OR BUILD?   --> can an existing module satisfy this?
 4.  DRAW UML            --> mermaid, validate it renders
 5.  ACCEPTANCE          --> what proves it works?
@@ -159,7 +185,7 @@ The architect's loop. Eight steps; the persisted plan is non-negotiable.
 8.  STOP CONDITION      --> ship, or stop the design
 ```
 
-Steps 6 and 7b cure the amnesia. Without the reload, the persistence is dead weight; without the persistence, the reload has nowhere to ground.
+Steps 6 and 7b cure the amnesia. They realize PLAN MEMENTO and ATTENTION ANCHOR &mdash; the externalized state and the periodic re-injection of goal + constraints that together defeat attention decay over long sessions. Without the reload, the persistence is dead weight; without the persistence, the reload has nowhere to ground.
 
 ## Runtimes
 
@@ -182,7 +208,7 @@ The primitives are the same. Only the file names change.
 - [ch 11: Context Engineering](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch11-context-engineering.qmd) &mdash; why MODULE ENTRYPOINT, CHILD-THREAD SPAWN, and PLAN PERSISTENCE exist.
 - [ch 12: Multi-Agent Orchestration](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch12-multi-agent-orchestration.qmd) &mdash; the theory the eight patterns implement.
 
-Each primitive earns its place against [PROSE](https://danielmeppiel.github.io/awesome-ai-native/): lazy assets in MODULE ENTRYPOINT are *Progressive Disclosure*; CHILD-THREAD SPAWN is *Reduced Scope*; pattern P7 is *Orchestrated Composition*; P4 is *Safety Boundaries*; cascading SCOPE-ATTACHED RULE FILEs are *Explicit Hierarchy*.
+Each primitive earns its place against [PROSE](https://danielmeppiel.github.io/awesome-ai-native/): lazy assets in MODULE ENTRYPOINT are *Progressive Disclosure*; CHILD-THREAD SPAWN is *Reduced Scope*; COMPOSED MODULE is *Orchestrated Composition*; VALIDATION DECORATOR is *Safety Boundaries*; cascading SCOPE-ATTACHED RULE FILEs are *Explicit Hierarchy*.
 
 ## License
 
