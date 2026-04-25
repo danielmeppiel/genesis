@@ -142,6 +142,13 @@ PROCEDURE:
    reference (S5 LAZY PROXY).
 3. Verify all callers of the original module still work, and any new
    callers that need the extracted content depend on it directly.
+4. If the extracted module crosses a project boundary (it becomes an
+   EXTERNAL MODULE per `composition-substrate.md`), ALSO DECLARE the
+   new dependency at the dependent module's distribution surface
+   (manifest dep entry / companion-module recommendation in the body
+   + tool-call probe at the use-site). Otherwise the dependent ships
+   with PHANTOM DEPENDENCY -- the reference exists in prose only and
+   the harness loader cannot supply the extracted module.
 
 ANTI-PATTERN (PROMOTION-WITHOUT-NEED): extracting content whose only
 caller is and will remain the original module, where the rule of three

@@ -27,7 +27,9 @@ name a countermeasure: the truth tells you which pattern is missing.
 | Truth (system property)                | Failure mode                       | Countermeasure pattern(s)                |
 |----------------------------------------|------------------------------------|------------------------------------------|
 | #1 CONTEXT IS FINITE AND FRAGILE       | attention drift; goal loss         | B4 PLAN MEMENTO + B8 ATTENTION ANCHOR    |
-| #2 CONTEXT MUST BE EXPLICIT            | tacit hand-off; assumed memory     | B4 PLAN MEMENTO; explicit handoff packet |
+| #2 CONTEXT MUST BE EXPLICIT            | tacit hand-off; assumed memory;    | B4 PLAN MEMENTO; explicit handoff        |
+|                                        | PHANTOM DEPENDENCY (named in       | packet; declare external deps at the     |
+|                                        | prose, undeclared to loader)       | distribution surface + S7/A9 probe       |
 | #3 OUTPUT IS PROBABILISTIC             | high-variance outputs              | S7 DETERMINISTIC TOOL BRIDGE; S4         |
 |                                        |                                    | VALIDATION DECORATOR (S7 is the primary  |
 |                                        |                                    | cure for consequential side effects)     |

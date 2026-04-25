@@ -219,6 +219,15 @@ module. Conflating primitive with module hides composition: leaf
 files get duplicated across projects instead of depended on as
 modules. See `composition-substrate.md` for the dependency model.
 
+A module's dependencies are surfaced AT ITS DISTRIBUTION SURFACE
+(manifest dep entry; or, when no manifest exists for that
+distribution mechanism, an explicit companion-module recommendation
+in the body + a tool-call probe at the use-site). Naming a
+dependency in prose without declaring it at a loader-visible
+surface is PHANTOM DEPENDENCY (see architect anti-patterns) -- the
+coupling is visible to humans reading the markdown but invisible
+to the harness loader, so the dependency cannot be supplied.
+
 ---
 
 ## Tool-call affordance (NOT a primitive type)

@@ -184,9 +184,23 @@ Then sketch a `flowchart LR` DEPENDENCY GRAPH showing this module
 plus its declared external modules and any transitive closure
 edges you can name. Mark each edge with the composition mode.
 
-If any external module is declared, the handoff packet MUST list
-it under "external modules required" so the coder step (7b) loads
-the module-system adapter.
+If any external module is declared, two things follow. (1) The
+handoff packet MUST list it under "external modules required" so
+the coder step (7b) loads the module-system adapter. (2) The
+emitted module that depends on it MUST DECLARE the dependency at
+its OWN distribution surface -- otherwise the module ships with
+PHANTOM DEPENDENCY and downstream loaders cannot supply the
+adapter. The chosen DECLARATION MECHANISM is recorded in the
+handoff packet (step 6) and is one of:
+- manifest dependency entry, when the emitted module ships
+  through a module system that supports them;
+- companion-module recommendation in the SKILL.md / README body
+  PLUS a tool-call probe at the use-site (mirrors the A9
+  SUPERVISED EXECUTION flow this skill applies at its own step
+  7b for the module-system adapter);
+- both, when the module system supports manifest deps AND the
+  emitted module also ships standalone to users who do not run
+  that module system.
 
 ### Step 4 - SoC pass
 
@@ -254,7 +268,11 @@ Produce a single artifact containing:
 - The module composition table: per box, INLINE | LOCAL SIBLING
   | EXTERNAL MODULE, with rationale.
 - The list of external modules required (drives whether step 7b
-  loads a module-system adapter).
+  loads a module-system adapter). For EACH external module, ALSO
+  record the DECLARATION MECHANISM chosen at step 3.5 (manifest
+  dep | companion-module recommendation + tool-call probe | both).
+  Drives step 8 validation that the emitted module did not ship
+  with PHANTOM DEPENDENCY.
 - The declared target set: `common-only` | `<list of harnesses>`.
 - The intended invocation mode per module: FORCED | DISCOVERY |
   BOTH. (Drives how strict description-collision review must be.)
@@ -382,6 +400,13 @@ better than against prose description.
 - Coherent unit (single responsibility).
 - Declared targets honored: no per-harness syntax leaked into a
   `common-only` module.
+- For every external module listed in the handoff packet, the
+  emitted module declares the dependency at its distribution
+  surface via the mechanism recorded at step 6 (manifest entry /
+  companion-module recommendation + tool-call probe at use-site /
+  both). Mere prose mention of the dependency handle is NOT
+  declaration -- that is PHANTOM DEPENDENCY (see architect
+  anti-patterns).
 - Bundled scripts are non-interactive, version-pinned, --help
   documented, stdout/stderr split.
 - EVALS GATE (from the step 6 evals plan):
