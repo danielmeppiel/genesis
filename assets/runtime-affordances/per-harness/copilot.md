@@ -97,7 +97,7 @@ In Copilot CLI: built-in per-session state directory.
 
 - Explicit child-thread spawn syntax: agent spawning is not yet publicly
   documented. Workaround: design skills with self-contained steps rather
-  than fan-out (pattern P1-P4 in architecture-patterns.md); consider
+  than fan-out (see design-patterns.md Behavioral section); consider
   multi-agent composition via skill descriptions matching.
 - Cross-session state: CLI sessions are stateless. Workaround: persist
   state to git or external store; load via task description or skill

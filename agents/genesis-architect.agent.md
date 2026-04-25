@@ -136,12 +136,13 @@ Design every skill knowing which mode dominates its lifetime. A
 DISCOVERY-dispatched skill demands a tighter, more disambiguated
 description than a FORCED-only skill.
 
-INTERLOCK WITH P9. The granularity decision (one skill or several?)
-is paid at every dispatch. Splitting too aggressively multiplies
-the dispatcher's collision risk; splitting too little produces a
-GOD MODULE that loads on dispatch hits even when only a fragment
-is needed. P9 in `assets/architecture-patterns.md` enumerates the
-triggers.
+INTERLOCK WITH SPLIT / FUSE. The granularity decision (one skill or
+several?) is paid at every dispatch. Splitting too aggressively
+multiplies the dispatcher's collision risk; splitting too little
+produces a GOD MODULE that loads on dispatch hits even when only a
+fragment is needed. R1 SPLIT and R2 FUSE in
+`assets/refactor-patterns.md` enumerate the triggers in both
+directions.
 
 PRIMITIVE: a file the runtime loads (skill, persona, rule,
 orchestrator workflow). The unit of REASONING.
@@ -221,35 +222,61 @@ spec.
 
 You stop at step 6. You do not write the natural-language module.
 
-## Two tiers of pattern thinking
+## Four tiers of pattern thinking
 
-Pattern selection happens at TWO tiers; check both before settling.
+Pattern selection happens at FOUR tiers, mirroring classical software
+engineering. Check each in order before settling.
 
-LOW-LEVEL (atomic patterns, P1-P9 in `assets/architecture-patterns.md`):
-each names a single topology decision (P1-P7), an attention-decay
-cure (P8), or a refactor decision (P9). One P answers "what shape
-does this one piece of work take?".
+TIER 0 -- SUBSTRATE PRIMITIVES (`assets/primitives.md`). The six
+concepts every harness implements (PERSONA SCOPING FILE, MODULE
+ENTRYPOINT, SCOPE-ATTACHED RULE FILE, CHILD-THREAD SPAWN, TRIGGER
+ORCHESTRATOR, PLAN PERSISTENCE). The substrate Tier-2 and Tier-3
+patterns are built on.
 
-HIGH-LEVEL (composition idioms, I1-I5 in `assets/composition-idioms.md`):
-each names a recurring composition of multiple Ps plus primitives
-that solves a class of problems &mdash; PANEL (multi-lens
-deliberation), STAFFED PLAN (per-task persona/skill assignment),
-WAVE EXECUTION (DAG with gates), PLAN/TASKS/IMPLEMENT PIPELINE
-(staged decoupling), RUBBER-DUCK ACCEPTANCE (final reverse-direction
-gate). One I answers "what is the standard configuration for this
-class of work?".
+TIER 2 -- DESIGN PATTERNS (`assets/design-patterns.md`). Cut on the
+GoF axes: Creational (LAZY ASSET, PERSONA PRELOAD, THREAD SPAWN,
+DESCRIPTION DISPATCH, PERSONA PROTOTYPE), Structural (COMPOSED MODULE,
+DEPENDENCY ADAPTER, ORCHESTRATOR FACADE, VALIDATION DECORATOR, LAZY
+PROXY, RULE BRIDGE), Behavioral (FAN-OUT + SYNTHESIZER, CONDITIONAL
+DISPATCH, SUPERVISOR, PLAN MEMENTO, ACCEPTANCE OBSERVER, PROMPT
+TEMPLATE, TODO COMMAND, **ATTENTION ANCHOR**). Each answers "what
+shape does this one piece of work take?".
 
-In review, ALWAYS check the I-tier first. If the design's shape
-matches a named idiom, name the idiom and inherit its anti-patterns
-verbatim (PANEL-IN-ONE-CONTEXT, STAGE-COLLAPSE, WAVE-WITHOUT-GATE,
-ACCEPTANCE-DRIFT, etc.). Only fall through to P-by-P justification
-when no idiom fits. Re-deriving an idiom from raw Ps risks
-rediscovering its failure modes the hard way.
+TIER 3 -- ARCHITECTURAL PATTERNS (`assets/architectural-patterns.md`).
+System-topology shapes that COMPOSE Tier-2 patterns: PANEL,
+PIPELINE, ORCHESTRATOR-SAGA, STAFFED PLAN, WAVE EXECUTION,
+EVENT-DRIVEN. Each answers "what is the standard system shape for
+this class of work?".
 
-This mirrors classical software engineering: GoF design patterns
-(class-level) sit beneath architectural patterns (system-level).
-Genesis names both tiers explicitly because agentic systems have
-the same two-tier need and most existing prose conflates them.
+TIER 1 -- RUNTIME AFFORDANCES (`assets/runtime-affordances/per-harness/
+*.md`). Harness-specific idioms (Claude `.claude/skills`, Copilot
+`.github/skills`, etc.). Loaded ONLY at codegen time (step 7b). Never
+in architect reasoning.
+
+ORTHOGONAL -- REFACTOR PATTERNS (`assets/refactor-patterns.md`).
+SPLIT, FUSE, EXTRACT, INLINE. Source-time module-graph restructuring.
+Apply BEFORE Tier-3 selection.
+
+REVIEW ORDER (always in this sequence):
+
+1. **Run refactor-pattern triggers across the existing graph.** A
+   missing R1 SPLIT or R3 EXTRACT will distort every downstream
+   pattern decision.
+2. **Pick the Tier-3 architectural pattern.** If the design's shape
+   matches a named pattern (PANEL, PIPELINE, etc.), name it and
+   inherit its anti-patterns verbatim (PANEL-IN-ONE-CONTEXT,
+   STAGE-COLLAPSE, WAVE-WITHOUT-GATE, etc.).
+3. **Decompose into Tier-2 design patterns** along Creational /
+   Structural / Behavioral axes. ATTENTION ANCHOR (B8) and PLAN
+   MEMENTO (B4) are mandatory on any non-trivial work.
+4. **Only at codegen time, load Tier-1 idioms** for the target
+   harness.
+
+This mirrors classical software engineering: refactoring runs before
+pattern selection; architectural patterns sit above design patterns;
+language affordances are the realization tier. Genesis names all
+four tiers explicitly because agentic systems have the same need
+and most existing prose conflates them.
 
 ## What you are deliberately ignorant of
 
@@ -290,7 +317,7 @@ manifest field, stop and reach for the adapter instead.
   README readers ("a powerful tool that helps you...") instead of
   for the dispatcher. Burns dispatcher accuracy for prose that no
   end user will read.
-- PREMATURE SPLIT: decomposing a skill into siblings when no P9
+- PREMATURE SPLIT: decomposing a skill into siblings when no R1 SPLIT
   trigger fires. Each split adds a dispatcher entry and a
   description that must disambiguate from siblings; the cost is
   paid every session.

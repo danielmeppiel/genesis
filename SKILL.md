@@ -53,7 +53,10 @@ emits the natural-language modules from the artifacts.
    1 intent + scope
         v
    2 component diagram   <-- load assets/mermaid-conventions.md
-        v                    load assets/architecture-patterns.md
+        v                    load assets/primitives.md
+        v                    load assets/design-patterns.md
+        v                    load assets/architectural-patterns.md
+        v                    load assets/refactor-patterns.md
    3 thread / sequence diagram
         v
  3.5 composition decision  <-- load assets/composition-substrate.md
@@ -95,7 +98,10 @@ against; see the persona's "Skill dispatch" section.
 ### Step 2 - component diagram (mermaid)
 
 Load:
-- `assets/architecture-patterns.md`
+- `assets/primitives.md`
+- `assets/design-patterns.md`
+- `assets/architectural-patterns.md`
+- `assets/refactor-patterns.md`
 - `assets/mermaid-conventions.md`
 
 Emit a `flowchart` showing every primitive module the design uses
@@ -110,17 +116,25 @@ Emit a `sequenceDiagram` showing:
 - Where parent waits (fan-in / synthesis).
 - Any interlock on shared sinks (one-writer rule).
 
+Pattern selection runs in tier order, ALWAYS:
+
+1. Run refactor-pattern triggers (`assets/refactor-patterns.md`)
+   across the existing module graph. A missing R1 SPLIT or R3
+   EXTRACT will distort every downstream pattern decision.
+2. Pick a TIER 3 architectural pattern from
+   `assets/architectural-patterns.md`. If the design's shape matches
+   PANEL, PIPELINE, ORCHESTRATOR-SAGA, STAFFED PLAN, WAVE EXECUTION,
+   or EVENT-DRIVEN, name it and inherit its anti-patterns verbatim.
+3. Decompose into TIER 2 design patterns
+   (`assets/design-patterns.md`) along the GoF axes. ATTENTION ANCHOR
+   (B8) and PLAN MEMENTO (B4) are MANDATORY on any non-trivial work.
+4. TIER 1 idioms (`assets/runtime-affordances/per-harness/<x>.md`)
+   load only at codegen time (step 7b), not now.
+
 If the design has >=3 independent lenses with no shared state and
 the diagram shows a single-thread loop, redo: it is a fan-out
-opportunity. The default for that shape is fan-out + parent
-synthesizer.
-
-Before settling on a P-pattern composition, check
-`assets/composition-idioms.md`: if the shape matches a named idiom
-(I1 PANEL, I2 STAFFED PLAN, I3 WAVE EXECUTION, I4 PLAN/TASKS/IMPLEMENT
-PIPELINE, I5 RUBBER-DUCK ACCEPTANCE), reach for it directly. The idiom
-brings its own anti-patterns and interlock rules; re-deriving from
-P1-P9 risks rediscovering them the hard way.
+opportunity. The default for that shape is FAN-OUT + SYNTHESIZER (B1)
+realizing PANEL (A1).
 
 ### Step 3.5 - composition decision
 
@@ -158,12 +172,17 @@ composition modes from step 3.5), check:
 - Does this module's dispatch description collide with an installed
   sibling's description? If yes, narrow one or merge. (DISPATCH
   COLLISION; HIGH severity.)
-- Does the module body trip any P9 split trigger (description
+- Does the module body trip any R1 SPLIT trigger (description
   conjunction, fragment callers, body over budget, multi-lens body,
-  divergent change cadence)? If yes, redesign per P9. If none fire
+  divergent change cadence)? If yes, redesign per R1. If none fire
   but the design splits anyway, flag PREMATURE SPLIT.
-- Does this module inline content that belongs in a separate
-  persona / rule? If yes, extract.
+- Does the module's existence collapse to one short body always
+  loaded with a sibling? Apply R2 FUSE.
+- Does the body inline content that belongs in a separate persona /
+  rule / asset? Apply R3 EXTRACT.
+- Does a thin proxy primitive exist with one caller and one
+  reference? Apply R4 INLINE.
+See `assets/refactor-patterns.md` for the full trigger set.
 
 ### Step 5 - compliance check
 
@@ -227,7 +246,8 @@ today's syntax.
 RELOAD THE PLAN before drafting each module, before each spawn,
 and after each spawn returns. The plan was persisted at step 6
 precisely so the executor can reground itself instead of relying
-on degraded recall (truth #1, substrate concept 6, pattern P8).
+on degraded recall (truth #1, substrate concept 6, patterns
+B4 PLAN MEMENTO + B8 ATTENTION ANCHOR).
 Update the todo list as each module reaches done.
 
 If the handoff packet declares any EXTERNAL MODULE under "external
@@ -260,7 +280,9 @@ in any one thread:
 - Long-running cross-session work -> orchestrator with persisted
   artifact between phases.
 
-See `assets/architecture-patterns.md` for the catalog.
+See `assets/design-patterns.md` for the design-pattern catalogue (GoF
+axes) and `assets/architectural-patterns.md` for the architectural
+patterns (system-topology shapes).
 
 ## Worked example
 

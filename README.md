@@ -138,9 +138,9 @@ Eight reusable topologies the architect picks from. P8 is orthogonal to the rest
 | **P7** | Composed module (depend, don't duplicate) | A primitive you need already exists |
 | **P8** | Plan-first with persisted plan | *Orthogonal:* combine whenever attention decay risks the work |
 
-Full catalogue with mermaid sketches, interlock requirements, anti-patterns, and a selection heuristic: [`assets/architecture-patterns.md`](assets/architecture-patterns.md).
+Full catalogue with mermaid sketches, interlock requirements, anti-patterns, and a selection heuristic: [`assets/design-patterns.md`](assets/design-patterns.md).
 
-P1-P9 are atomic. Recurring *compositions* of them &mdash; PANEL, STAFFED PLAN, WAVE EXECUTION, PLAN/TASKS/IMPLEMENT PIPELINE, RUBBER-DUCK ACCEPTANCE &mdash; live in [`assets/composition-idioms.md`](assets/composition-idioms.md). They are the AI-native equivalent of architectural patterns (MVC, CQRS) over class-level patterns.
+P1-P9 are atomic. Recurring *compositions* of them &mdash; PANEL, STAFFED PLAN, WAVE EXECUTION, PLAN/TASKS/IMPLEMENT PIPELINE, RUBBER-DUCK ACCEPTANCE &mdash; live in [`assets/architectural-patterns.md`](assets/architectural-patterns.md). They are the AI-native equivalent of architectural patterns (MVC, CQRS) over class-level patterns.
 
 ## Process
 

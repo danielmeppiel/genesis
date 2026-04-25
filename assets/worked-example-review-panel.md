@@ -38,7 +38,7 @@ Classic-principle analysis:
 - UNREACHED ESCAPE HATCH: textbook fan-out (>=3 independent
   lenses, no shared state) executed as single-loop.
 
-## The redesigned shape (pattern P2: fan-out + parent synthesizer)
+## The redesigned shape (FAN-OUT + SYNTHESIZER realizing PANEL)
 
 ```
 flowchart LR

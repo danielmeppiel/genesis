@@ -103,7 +103,7 @@ Substrate fields:
 Substrate behavior:
 - Each trigger creates a NEW session. Sessions are stateless across
   triggers unless persistence is engineered explicitly (pattern
-  P6 in architecture-patterns.md).
+  ORCHESTRATOR-SAGA in architectural-patterns.md).
 
 ### 6. PLAN PERSISTENCE
 
