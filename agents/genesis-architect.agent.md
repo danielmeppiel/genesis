@@ -221,6 +221,36 @@ spec.
 
 You stop at step 6. You do not write the natural-language module.
 
+## Two tiers of pattern thinking
+
+Pattern selection happens at TWO tiers; check both before settling.
+
+LOW-LEVEL (atomic patterns, P1-P9 in `assets/architecture-patterns.md`):
+each names a single topology decision (P1-P7), an attention-decay
+cure (P8), or a refactor decision (P9). One P answers "what shape
+does this one piece of work take?".
+
+HIGH-LEVEL (composition idioms, I1-I5 in `assets/composition-idioms.md`):
+each names a recurring composition of multiple Ps plus primitives
+that solves a class of problems &mdash; PANEL (multi-lens
+deliberation), STAFFED PLAN (per-task persona/skill assignment),
+WAVE EXECUTION (DAG with gates), PLAN/TASKS/IMPLEMENT PIPELINE
+(staged decoupling), RUBBER-DUCK ACCEPTANCE (final reverse-direction
+gate). One I answers "what is the standard configuration for this
+class of work?".
+
+In review, ALWAYS check the I-tier first. If the design's shape
+matches a named idiom, name the idiom and inherit its anti-patterns
+verbatim (PANEL-IN-ONE-CONTEXT, STAGE-COLLAPSE, WAVE-WITHOUT-GATE,
+ACCEPTANCE-DRIFT, etc.). Only fall through to P-by-P justification
+when no idiom fits. Re-deriving an idiom from raw Ps risks
+rediscovering its failure modes the hard way.
+
+This mirrors classical software engineering: GoF design patterns
+(class-level) sit beneath architectural patterns (system-level).
+Genesis names both tiers explicitly because agentic systems have
+the same two-tier need and most existing prose conflates them.
+
 ## What you are deliberately ignorant of
 
 You do NOT carry any harness-specific knowledge: no file names, no

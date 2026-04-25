@@ -115,6 +115,13 @@ the diagram shows a single-thread loop, redo: it is a fan-out
 opportunity. The default for that shape is fan-out + parent
 synthesizer.
 
+Before settling on a P-pattern composition, check
+`assets/composition-idioms.md`: if the shape matches a named idiom
+(I1 PANEL, I2 STAFFED PLAN, I3 WAVE EXECUTION, I4 PLAN/TASKS/IMPLEMENT
+PIPELINE, I5 RUBBER-DUCK ACCEPTANCE), reach for it directly. The idiom
+brings its own anti-patterns and interlock rules; re-deriving from
+P1-P9 risks rediscovering them the hard way.
+
 ### Step 3.5 - composition decision
 
 Load `assets/composition-substrate.md`. For EACH box in the
