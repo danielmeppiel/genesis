@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" width="720" height="200"
+     role="img"
+     aria-label="genesis-skill: serif G logomark next to monospace wordmark">
+  <title>genesis-skill</title>
+
+  <!-- logomark: scaled favicon (black rounded square + Playfair G) -->
+  <rect x="0" y="20" width="160" height="160" rx="25" fill="#000000"/>
+  <text x="80" y="142"
+        text-anchor="middle"
+        font-family="'Playfair Display', Georgia, serif"
+        font-weight="700"
+        font-size="120"
+        fill="#daf172">G</text>
+
+  <!-- wordmark + tagline -->
+  <text x="195" y="105"
+        font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace"
+        font-weight="700"
+        font-size="44"
+        fill="#0d1117">genesis-skill</text>
+  <text x="195" y="142"
+        font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace"
+        font-size="16"
+        fill="#0d1117"
+        opacity="0.65">a design discipline for agentic primitives</text>
+</svg>

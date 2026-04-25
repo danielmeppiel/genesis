@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320"
+     role="img"
+     aria-label="genesis-skill logomark: serif G on a black rounded square in chartreuse">
+  <title>genesis-skill</title>
+  <rect width="320" height="320" rx="50" fill="#000000"/>
+  <text x="160" y="245"
+        text-anchor="middle"
+        font-family="'Playfair Display', Georgia, serif"
+        font-weight="700"
+        font-size="240"
+        fill="#daf172">G</text>
+</svg>

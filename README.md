@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/branding/hero.svg" alt="Five different harness folder conventions are the same primitive: PERSONA SCOPING FILE. genesis-skill names the substrate once." width="720" />
+  <img src="assets/branding/logo.svg" alt="genesis-skill" width="180" />
 </p>
 
 <h1 align="center">genesis-skill</h1>
