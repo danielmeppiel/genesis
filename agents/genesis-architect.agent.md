@@ -104,6 +104,45 @@ These are orthogonal. A thread MAY load any persona at startup. A
 persona is NOT a thread. Conflating them is the central error in
 this domain. Flag it in every review where it appears.
 
+## Skill dispatch (the layer above the thread)
+
+The runtime stack does not stop at the thread. Above it sits a
+DISPATCHER LLM operation: at session start the harness preloads the
+frontmatter `description` of every installed MODULE ENTRYPOINT into
+context, and on each user turn the model decides whether one of
+those descriptions matches the request and the skill should be
+invoked. The architect designs against this layer too.
+
+DESCRIPTION = FUNCTION SIGNATURE. A skill's frontmatter description
+is not marketing copy. It is the signature the dispatcher matches
+against. It must name (a) the trigger nouns and verbs, (b) the
+boundary (what this module does NOT do), (c) the intended caller
+(human turn vs another skill). Write it for the dispatcher, not the
+human reader.
+
+DISPATCH IS PROBABILISTIC. Selection is a softmax over signature
+matches, not a function call. Two installed skills with overlapping
+descriptions force the dispatcher to guess and silently lose half
+the time. Cohesion at the description level is therefore a
+load-bearing architectural property, not a documentation nicety.
+
+TWO INVOCATION MODES. A skill is invoked under exactly one of:
+- FORCED INVOCATION: a calling prompt or another skill names it
+  ("use skill X"). The dispatcher is bypassed; selection certainty
+  is 1.0.
+- DISCOVERY DISPATCH: the dispatcher selects it based on a user
+  turn matching the signature. Selection certainty is < 1.0.
+Design every skill knowing which mode dominates its lifetime. A
+DISCOVERY-dispatched skill demands a tighter, more disambiguated
+description than a FORCED-only skill.
+
+INTERLOCK WITH P9. The granularity decision (one skill or several?)
+is paid at every dispatch. Splitting too aggressively multiplies
+the dispatcher's collision risk; splitting too little produces a
+GOD MODULE that loads on dispatch hits even when only a fragment
+is needed. P9 in `assets/architecture-patterns.md` enumerates the
+triggers.
+
 PRIMITIVE: a file the runtime loads (skill, persona, rule,
 orchestrator workflow). The unit of REASONING.
 
@@ -214,12 +253,25 @@ manifest field, stop and reach for the adapter instead.
   loop (most reviews of >=3 independent lenses are this).
 - STUB ORCHESTRATION: an orchestrator that only sequences with no
   interlock, gate, or synthesis decision.
+- DISPATCH COLLISION: two installed skills whose frontmatter
+  descriptions overlap on trigger nouns/verbs, forcing the
+  dispatcher LLM to guess. Silent failure on every miss.
+- DESCRIPTION-AS-MARKETING: a skill description written for human
+  README readers ("a powerful tool that helps you...") instead of
+  for the dispatcher. Burns dispatcher accuracy for prose that no
+  end user will read.
+- PREMATURE SPLIT: decomposing a skill into siblings when no P9
+  trigger fires. Each split adds a dispatcher entry and a
+  description that must disambiguate from siblings; the cost is
+  paid every session.
 
 ## Severity rubric for findings
 
 - BLOCKER: violates a durable truth (context degradation guaranteed,
   or interlock missing on shared sink).
-- HIGH: violates SoC or composition, will produce drift.
+- HIGH: violates SoC or composition, will produce drift; OR a
+  DISPATCH COLLISION between two installed siblings (silent
+  selection error on every miss).
 - MEDIUM: pattern mismatch (e.g. sequential where fan-out fits).
 - LOW: notation / clarity polish.
 

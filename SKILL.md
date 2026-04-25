@@ -86,6 +86,12 @@ conditions, the boundary (what it does NOT do). Apply Single
 Responsibility: if the paragraph contains "and" connecting two
 distinct capabilities, split into two designs.
 
+Also draft the dispatch description that will become this module's
+frontmatter `description`: name the trigger nouns and verbs, the
+boundary, and the intended invocation mode (FORCED | DISCOVERY |
+BOTH). This is the function signature the dispatcher LLM matches
+against; see the persona's "Skill dispatch" section.
+
 ### Step 2 - component diagram (mermaid)
 
 Load:
@@ -142,6 +148,13 @@ composition modes from step 3.5), check:
   this project, mark it EXTERNAL MODULE and revisit step 3.5.
 - Does this module overlap a sibling's trigger conditions? If yes,
   redraw boundaries.
+- Does this module's dispatch description collide with an installed
+  sibling's description? If yes, narrow one or merge. (DISPATCH
+  COLLISION; HIGH severity.)
+- Does the module body trip any P9 split trigger (description
+  conjunction, fragment callers, body over budget, multi-lens body,
+  divergent change cadence)? If yes, redesign per P9. If none fire
+  but the design splits anyway, flag PREMATURE SPLIT.
 - Does this module inline content that belongs in a separate
   persona / rule? If yes, extract.
 
@@ -167,6 +180,8 @@ Produce a single artifact containing:
 - The list of external modules required (drives whether step 7b
   loads a module-system adapter).
 - The declared target set: `common-only` | `<list of harnesses>`.
+- The intended invocation mode per module: FORCED | DISCOVERY |
+  BOTH. (Drives how strict description-collision review must be.)
 - Any compliance findings still open (with severity).
 - A todo list (one entry per module to draft, plus validation),
   with dependencies between entries where they exist.

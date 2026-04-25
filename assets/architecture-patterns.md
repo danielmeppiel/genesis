@@ -269,6 +269,89 @@ slots; the per-harness adapter names the concrete mechanism.
 
 ---
 
+## P9. Module split / extraction (decomposition)
+
+WHEN: an existing module has grown to do more than one job, or a
+new design draft is heading there. P9 is the dual of P7 (compose
+don't duplicate): P7 governs fusion, P9 governs fission. Together
+they keep primitive granularity correct in both directions.
+
+P9 is a SOURCE-TIME refactor pattern, not a runtime topology. It
+answers "is this one primitive or N?" before P1-P8 answer "how do
+they execute?".
+
+TRIGGERS (any one fires P9):
+
+- DESCRIPTION CONJUNCTION. The module's frontmatter description
+  uses "and" between two trigger noun-phrases, or uses two distinct
+  trigger verbs. The dispatcher cannot route cleanly because the
+  signature is two signatures.
+- FRAGMENT CALLERS. Real call sites need only a strict subset of
+  the body. Loading the whole module on every dispatch hit pays
+  context cost the caller does not benefit from.
+- BODY OVER BUDGET. The module body exceeds the harness's
+  sustainable per-skill load (rule of thumb: when the body
+  approaches the context budget you reserve for skill loading,
+  attention to the rest of the session degrades).
+- MULTI-LENS BODY. The body internally toggles between two or more
+  reviewer lenses, voices, or rule sets (the GOD MODULE smell,
+  reframed as a split trigger). Each lens is a candidate primitive.
+- DIVERGENT CHANGE CADENCE. Two parts of the body change for
+  unrelated reasons (unit-of-change / SRP violation).
+
+INTERLOCK: split is a SOURCE-TIME refactor. After the split, the
+original entrypoint becomes EITHER (a) a thin orchestrator that
+dispatches to the new primitives via P3, OR (b) deleted with its
+callers updated to dispatch directly. Decide at design time; do
+not leave both.
+
+```
+before                          after
++------------------+            +-------------+
+| skill X          |   split    | skill X1    |
+|  - capability A  |  ------>   |  - cap A    |
+|  - capability B  |            +-------------+
+|  - capability C  |            | skill X2    |
++------------------+            |  - cap B    |
+                                +-------------+
+                                | skill X3    |
+                                |  - cap C    |
+                                +-------------+
+```
+
+CLASSIC ANALOGUE: function extraction; module decomposition along
+SRP; SoC refactor.
+
+JUSTIFICATION: a god skill carries the function-decomposition smells
+(untestable, unreusable, high coupling) PLUS a context-cost smell --
+the entire body loads on every dispatch hit even when only one
+fragment is needed by the caller.
+
+COMPOUNDING GAIN. Splitting a skill is the modularization decision
+that pays twice. Once in cohesion: the caller targets exactly one
+job and the dispatcher signature stays sharp. Once in attention: a
+split skill becomes individually invocable via CHILD-THREAD SPAWN
+(see runtime affordances), so its body runs in a fresh context
+window instead of competing for tokens with the parent's session.
+Splits with this dual payoff are the highest-priority candidates --
+they convert a SoC win into a context-isolation win for free.
+
+ANTI-PATTERN (PREMATURE SPLIT): do NOT split when none of the WHEN
+clauses fire. Each split adds a dispatch-table entry, a description
+that must disambiguate from siblings, and a collision risk paid on
+every session start. Splitting a 50-line single-trigger skill into
+five skills is the agentic analogue of writing 10 functions for a
+50-line program: overhead exceeds benefit, and the dispatcher pays
+the cost forever.
+
+PROMOTION / DECOMPOSITION SYMMETRY: P9 is the dual of P7's
+PROMOTION RULE. P7 promotes a leaf to a depended module when reuse
+pressure justifies it; P9 splits a monolith into siblings when
+load / cohesion / dispatch-cost pressure justifies it. Together
+they govern primitive granularity in both directions.
+
+---
+
 ## Selection heuristic (decision flow)
 
 ```
@@ -312,3 +395,6 @@ P8 is orthogonal: combine it with the chosen topology whenever the
 WHEN-clause for P8 fires. P8 is the cure for attention decay; the
 topology choice (P1-P7) is the cure for parallelism / isolation /
 verifiability concerns.
+
+P9 is a refactor pattern, not a topology: it answers "is this one
+primitive or N?" before P1-P8 answer "how do they execute?".

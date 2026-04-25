@@ -9,10 +9,6 @@
 </p>
 
 <p align="center">
-  <sub>By <a href="https://github.com/danielmeppiel">Daniel Meppiel</a> &mdash; creator of <a href="https://github.com/microsoft/apm">APM</a> and the <a href="https://danielmeppiel.github.io/awesome-ai-native/">PROSE framework</a>, author of <a href="https://github.com/danielmeppiel/agentic-sdlc-handbook"><em>The Agentic SDLC Handbook</em></a>.</sub>
-</p>
-
-<p align="center">
   <a href="https://agentskills.io"><img src="https://img.shields.io/badge/agentskills.io-spec-blue?style=flat" alt="agentskills.io"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/danielmeppiel/genesis?style=flat" alt="License"></a>
   <a href="https://github.com/danielmeppiel/genesis/stargazers"><img src="https://img.shields.io/github/stars/danielmeppiel/genesis?style=flat&color=yellow" alt="Stars"></a>
@@ -20,8 +16,9 @@
 </p>
 
 <p align="center">
-  <a href="#the-shift">The shift</a> &middot;
+  <a href="#worked-example">Worked example</a> &middot;
   <a href="#failure-modes">Failure modes</a> &middot;
+  <a href="#the-shift">The shift</a> &middot;
   <a href="#install">Install</a> &middot;
   <a href="#primitives">Primitives</a> &middot;
   <a href="#patterns">Patterns</a> &middot;
@@ -35,20 +32,41 @@ Most agent skills, agents, and instruction files are written like prose for huma
 
 `genesis` is the design discipline that comes before authoring. It teaches your agent to think like a software architect first: **name the primitives, choose a pattern, draw the diagram, persist the plan &mdash; then write the file.**
 
-## The shift
+## Worked example
 
-Authoring agentic primitives is no longer a writing job. It is an architecture job. *The Agentic SDLC Handbook* names the role transition explicitly:
+A common ask:
 
-> "AI is a capable but amnesiac engineer that needs explicit context to do useful work."  
-> &mdash; *The Agentic SDLC Handbook*, [ch 8: The Practitioner's Mindset](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch08-the-practitioners-mindset.qmd)
+> *"Use the genesis-architect persona and the genesis discipline to design a skill that reviews my PRs before I do &mdash; checking for missing tests, undocumented public API, and unsafe migrations."*
 
-Three roles fall out of that observation:
+Genesis produces this **before** writing any file:
 
-- **Architect** &mdash; you design the work before any agent writes a line. You decide which primitives exist, how they compose, and which run in their own threads.
-- **Reviewer** &mdash; you verify the output against an acceptance criterion you wrote *before* you saw the result.
-- **Escalation handler** &mdash; you absorb the cases the agent cannot, with enough context loaded to be useful.
+**GOAL.** One reviewer that flags missing tests, undocumented public API, and unsafe migrations on a PR diff.
 
-Genesis is the discipline you apply when you are wearing the architect hat. It gives you a vocabulary, a pattern catalogue, a composition model, and a persisted-plan loop.
+**PRIMITIVES.**
+- `MODULE ENTRYPOINT` &mdash; the `pr-review` skill itself.
+- `CHILD-THREAD SPAWN` &times; 3 &mdash; one per lens (tests, docs, migrations), so each runs in a fresh context window.
+- `PLAN PERSISTENCE` &mdash; findings written to `pr-review.md` so a re-run on the same PR is comparable.
+
+**PATTERN.** **P2** (fan-out + parent synthesizer). The three lenses are independent and share no state; running them in one window cross-contaminates voice and dilutes attention. Justified.
+
+**UML.**
+
+```mermaid
+flowchart LR
+  PR[PR diff] --> P[parent: pr-review skill]
+  P --> T1[thread: tests lens]
+  P --> T2[thread: docs lens]
+  P --> T3[thread: migrations lens]
+  T1 --> S[synthesis: pr-review.md]
+  T2 --> S
+  T3 --> S
+```
+
+**ACCEPTANCE.** On a PR with one missing test, one undocumented export, and a benign migration, the output names exactly two findings (no false positive on the migration), each citing the file path.
+
+**PLAN.** `pr-review.md` written first. Only then does the agent author the skill, the persona, and the rule files.
+
+This output is what the discipline buys you. The file you eventually write is the easy part.
 
 ## Failure modes
 
@@ -60,7 +78,19 @@ Symptoms an architect recognises &mdash; even before the vocabulary lands:
 
 These are not writing problems. They are architecture problems wearing prose clothing &mdash; a missing type system, a missing process loop, a missing dependency edge.
 
-For a senior version of the same failure &mdash; a five-lens review panel cross-contaminating inside one context window &mdash; see [the worked example](assets/worked-example-review-panel.md).
+For a senior version of the same failure &mdash; a five-lens review panel cross-contaminating inside one context window &mdash; see [the worked review-panel example](assets/worked-example-review-panel.md).
+
+## The shift
+
+Authoring agentic primitives is no longer a writing job. It is an architecture job. An LLM is a capable but amnesiac engineer: every turn starts with whatever fits in its context window, and nothing else.
+
+Three roles fall out of that constraint:
+
+- **Architect** &mdash; you design the work before any agent writes a line. You decide which primitives exist, how they compose, and which run in their own threads.
+- **Reviewer** &mdash; you verify the output against an acceptance criterion you wrote *before* you saw the result.
+- **Escalation handler** &mdash; you absorb the cases the agent cannot, with enough context loaded to be useful.
+
+Genesis is the discipline you apply when you are wearing the architect hat. It gives you a vocabulary, a pattern catalogue, a composition model, and a persisted-plan loop.
 
 ## Install
 
@@ -70,19 +100,15 @@ One line via [APM](https://github.com/microsoft/apm):
 apm install danielmeppiel/genesis
 ```
 
-Or drop the files into your harness's skills folder manually.
+Or drop the files into your harness's skills folder manually &mdash; see the [runtime adapters](#runtimes) for the right path per harness.
 
-Then ask your agent:
-
-> *"Use the genesis-architect persona and the genesis discipline to design a [thing you want]."*
-
-The agent will produce: a goal statement, a primitives breakdown, a justified pattern choice, a mermaid UML, an acceptance criterion, and a persisted plan &mdash; before writing a single primitive file.
+Then invoke as in the worked example above.
 
 ---
 
 ## Primitives
 
-Six concepts the architect always uses. Every harness implements them under different folder names. Genesis names them once.
+Every harness implements the same six concepts under different folder names. Genesis names them once so the vocabulary outlives any one tool.
 
 | Concept | What it is | Industry term |
 |---|---|---|
@@ -95,7 +121,7 @@ Six concepts the architect always uses. Every harness implements them under diff
 
 These names are deliberately generic. The discipline must outlive any one tool.
 
-The composition model adds five more concepts (MODULE, DEPENDENCY, TRANSITIVE CLOSURE, VERSION PINNING, PORTABILITY MODE) and names the recurring failure modes it prevents &mdash; **DUPLICATED LEAF** (the same paragraph copy-pasted across N primitives) and **TRANSITIVE BLOAT** (a thin wrapper module pulling in a heavy dependency closure). See [`assets/composition-substrate.md`](assets/composition-substrate.md).
+A composition layer sits on top &mdash; how primitives depend on each other, version, and stay portable. See [`assets/composition-substrate.md`](assets/composition-substrate.md).
 
 ## Patterns
 
@@ -145,7 +171,7 @@ Steps 6 and 7b cure the amnesia. Without the reload, the persistence is dead wei
 
 The primitives are the same. Only the file names change.
 
-## Read the canon
+## Further reading
 
 `genesis` is the executable companion to *[The Agentic SDLC Handbook](https://github.com/danielmeppiel/agentic-sdlc-handbook)* &mdash; specifically:
 
@@ -156,11 +182,11 @@ The primitives are the same. Only the file names change.
 
 Each primitive earns its place against [PROSE](https://danielmeppiel.github.io/awesome-ai-native/): lazy assets in MODULE ENTRYPOINT are *Progressive Disclosure*; CHILD-THREAD SPAWN is *Reduced Scope*; pattern P7 is *Orchestrated Composition*; P4 is *Safety Boundaries*; cascading SCOPE-ATTACHED RULE FILEs are *Explicit Hierarchy*.
 
-The Handbook gives you the methodology. [PROSE](https://danielmeppiel.github.io/awesome-ai-native/) gives you the constraint language. Genesis gives your agent the discipline. [APM](https://github.com/microsoft/apm) gives you the package manager.
-
 ## License
 
 MIT. If this changes how you design agent primitives, I want to hear about it &mdash; find me on [GitHub](https://github.com/danielmeppiel) or [LinkedIn](https://www.linkedin.com/in/danielmeppiel/).
+
+<sub>By Daniel Meppiel &mdash; author of <a href="https://github.com/danielmeppiel/agentic-sdlc-handbook"><em>The Agentic SDLC Handbook</em></a>.</sub>
 
 ---
 
