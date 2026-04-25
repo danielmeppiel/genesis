@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://em-content.zobj.net/source/apple/391/spiral-notepad_1f4d3.png" width="120" />
+  <img src="assets/branding/hero.svg" alt="genesis: substrate for agentic primitives" width="600" />
 </p>
 
 <h1 align="center">genesis-skill</h1>

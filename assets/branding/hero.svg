@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" width="720" height="200" role="img" aria-label="genesis: substrate for agentic primitives">
+  <style>
+    .panel { fill: #0d1117; }
+    .word  { fill: #e6edf3; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-weight: 600; letter-spacing: -0.02em; }
+    .tag   { fill: #7d8590; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; }
+    .accent{ stroke: #58a6ff; stroke-width: 2; }
+    .grid  { stroke: #21262d; stroke-width: 1; }
+    .stack { fill: none; stroke: #e6edf3; stroke-width: 1.5; }
+    .substrate { fill: #58a6ff; }
+  </style>
+
+  <rect class="panel" width="720" height="200" rx="8"/>
+
+  <!-- substrate grid: subtle horizontal rules -->
+  <g class="grid">
+    <line x1="60"  y1="170" x2="660" y2="170"/>
+    <line x1="60"  y1="180" x2="660" y2="180"/>
+  </g>
+
+  <!-- primitive stack icon, left side: 4 small bars representing
+       skill / agent / instruction / runtime sitting on a substrate -->
+  <g transform="translate(72, 56)">
+    <!-- 3 stacked primitive bars -->
+    <rect class="stack" x="0"  y="0"  width="88" height="14" rx="2"/>
+    <rect class="stack" x="0"  y="22" width="68" height="14" rx="2"/>
+    <rect class="stack" x="0"  y="44" width="78" height="14" rx="2"/>
+    <!-- substrate bar -->
+    <rect class="substrate" x="-4" y="68" width="100" height="6" rx="1"/>
+  </g>
+
+  <!-- wordmark -->
+  <text class="word" x="208" y="98" font-size="64">genesis</text>
+
+  <!-- accent underscore under wordmark -->
+  <line class="accent" x1="208" y1="118" x2="298" y2="118"/>
+
+  <!-- tagline -->
+  <text class="tag" x="208" y="148" font-size="14">substrate for agentic primitives</text>
+</svg>
