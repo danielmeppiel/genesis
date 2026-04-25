@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/branding/logo.svg" alt="genesis-skill" width="180" />
+  <img src="assets/branding/logo.svg" alt="genesis" width="180" />
 </p>
 
-<h1 align="center">genesis-skill</h1>
+<h1 align="center">genesis</h1>
 
 <p align="center">
   <strong>Markdown that steers an LLM is code. Design it before you write it.</strong>
@@ -14,9 +14,9 @@
 
 <p align="center">
   <a href="https://agentskills.io"><img src="https://img.shields.io/badge/agentskills.io-spec-blue?style=flat" alt="agentskills.io"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/danielmeppiel/genesis-skill?style=flat" alt="License"></a>
-  <a href="https://github.com/danielmeppiel/genesis-skill/stargazers"><img src="https://img.shields.io/github/stars/danielmeppiel/genesis-skill?style=flat&color=yellow" alt="Stars"></a>
-  <a href="https://github.com/danielmeppiel/genesis-skill/commits/main"><img src="https://img.shields.io/github/last-commit/danielmeppiel/genesis-skill?style=flat" alt="Last Commit"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/danielmeppiel/genesis?style=flat" alt="License"></a>
+  <a href="https://github.com/danielmeppiel/genesis/stargazers"><img src="https://img.shields.io/github/stars/danielmeppiel/genesis?style=flat&color=yellow" alt="Stars"></a>
+  <a href="https://github.com/danielmeppiel/genesis/commits/main"><img src="https://img.shields.io/github/last-commit/danielmeppiel/genesis?style=flat" alt="Last Commit"></a>
 </p>
 
 <p align="center">
@@ -33,7 +33,7 @@
 
 Most agent skills, agents, and instruction files are written like prose for humans. They are not. They are **code for an inferencing engine** with a finite context window, an attention drop-off, and a probabilistic output distribution. Without an architectural discipline they dilute into context bloat, cross-contaminated lenses, and quietly drifting outputs.
 
-`genesis-skill` is the design discipline that comes before authoring. It teaches your agent to think like a software architect first: **name the substrate, choose a pattern, draw the diagram, persist the plan &mdash; then write the file.**
+`genesis` is the design discipline that comes before authoring. It teaches your agent to think like a software architect first: **name the substrate, choose a pattern, draw the diagram, persist the plan &mdash; then write the file.**
 
 ## The shift
 
@@ -62,17 +62,17 @@ This is **pattern P2** &mdash; *fan-out + parent synthesizer* &mdash; applied as
 
 ## Install
 
-Install via [APM](https://github.com/microsoft/apm) (one line) or drop the files into your harness's skills folder:
+One line via [APM](https://github.com/microsoft/apm):
 
 ```bash
-# APM users
-echo "  - danielmeppiel/genesis-skill" >> apm.yml   # under dependencies.modules
-apm install
+apm install danielmeppiel/genesis
 ```
+
+Or drop the files into your harness's skills folder manually.
 
 Then ask your agent:
 
-> *"Use the genesis-architect persona and the genesis-skill discipline to design a [thing you want]."*
+> *"Use the genesis-architect persona and the genesis discipline to design a [thing you want]."*
 
 The agent will produce: a goal statement, a substrate-named breakdown, a justified pattern choice, a mermaid UML, an acceptance criterion, and a persisted plan &mdash; before writing a single primitive file.
 
@@ -145,7 +145,7 @@ The substrate is the same. Only the file names change.
 
 ## Read the canon
 
-`genesis-skill` is the executable companion to *[The Agentic SDLC Handbook](https://github.com/danielmeppiel/agentic-sdlc-handbook)* &mdash; specifically:
+`genesis` is the executable companion to *[The Agentic SDLC Handbook](https://github.com/danielmeppiel/agentic-sdlc-handbook)* &mdash; specifically:
 
 - [ch 8: The Practitioner's Mindset](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch08-the-practitioners-mindset.qmd) &mdash; the role-shift to architect / reviewer / escalation handler.
 - [ch 10: The PROSE Specification](https://github.com/danielmeppiel/agentic-sdlc-handbook/blob/main/handbook/ch10-the-prose-specification.qmd) &mdash; the constraint language each substrate concept maps to.

@@ -1,6 +1,6 @@
-name: genesis-skill
+name: genesis
 version: 0.1.0
 description: A design discipline for agentic primitives. Substrate, patterns, composition model, and persisted-plan loop for authoring agent skills before you write the markdown.
 author: Daniel Meppiel <danielmeppiel@users.noreply.github.com>
 license: MIT
-homepage: https://github.com/danielmeppiel/genesis-skill
+homepage: https://github.com/danielmeppiel/genesis
