@@ -218,3 +218,47 @@ dependencies + version + identity. One primitive may itself be a
 module. Conflating primitive with module hides composition: leaf
 files get duplicated across projects instead of depended on as
 modules. See `composition-substrate.md` for the dependency model.
+
+---
+
+## Tool-call affordance (NOT a primitive type)
+
+Beyond the six primitive FILES above, every modern harness exposes a
+TOOL-CALL AFFORDANCE: a runtime mechanism by which the LLM emits a
+structured invocation (name + arguments) that the harness executes
+deterministically on a CPU and returns to the next inference step.
+This is a RUNTIME PROPERTY of the harness, not a new primitive type.
+It does not ship as a markdown file you author; it is exposed by the
+harness to the model via the tool-call protocol.
+
+WITHOUT this affordance the LLM has no impact on real systems -- it
+can only emit text. Harnesses therefore PRELOAD a primitive tool
+surface so an agent is useful from turn one. The TERMINAL (shell
+command execution) is the universal preloaded tool and the highest-
+leverage one, because the LLM can synthesize any command across any
+installed CLI. Operators widen this surface via three concrete
+routes (covered in S7 EXTENSION PATHS in `design-patterns.md`):
+preloaded terminal, custom CLI/script/API the skill instructs the
+LLM to call, or an MCP server that advertises typed tools to the
+harness.
+
+Genesis treats this affordance as the structural seam between the
+LLM (probabilistic, frozen, hallucination-prone) and deterministic
+substrate (CLI, scripts, MCP servers, HTTP APIs). The pattern that
+names this seam is S7 DETERMINISTIC TOOL BRIDGE in
+`design-patterns.md`. The architectural pattern that USES it is A9
+SUPERVISED EXECUTION in `architectural-patterns.md`.
+
+CANONICAL EXTERNAL CORPUS, BOUNDED. The Model Context Protocol
+([modelcontextprotocol.io](https://modelcontextprotocol.io)) is the
+authoritative specification for ONE concrete realization of the
+tool-call affordance: the protocol layer between an MCP-aware
+harness and an MCP server (schema advertisement, invocation,
+response shape). Cite it for the protocol surface; do NOT promote
+its framing into the genesis primitive taxonomy. MCP is a transport
+for the tool-call affordance, not a new primitive type. Per C6
+EXTERNAL CORPUS GROUNDING with BOUNDED SCOPE (see
+`design-patterns.md`), any design that imports MCP framing into
+genesis ontology is AUTHORITY OVERREACH. Flag and split: route
+protocol questions to MCP, taxonomy and pattern questions to
+genesis.

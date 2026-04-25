@@ -25,6 +25,7 @@ rediscovering its failure modes the hard way.
 | EVENT-DRIVEN          | Event-Driven Architecture   | TRIGGER ORCHESTRATOR + any Tier-2 mix        |
 | ADVERSARIAL REVIEW    | Code Review + Red Team      | B1 + N x C2 + S4 + cold-context spawn        |
 | ALIGNMENT LOOP        | Iteration with stop-condition | A1 (or A2) + B4 + B9 + B10 + bounded loop  |
+| SUPERVISED EXECUTION  | Plan-Execute-Verify (controller) | B4 + S7 + S4 + (optional) B10            |
 
 ---
 
@@ -395,6 +396,88 @@ ANTI-PATTERNS:
 
 ---
 
+## A9. SUPERVISED EXECUTION (plan, deterministic execute, verify)
+
+CLASSICAL ANALOG: Plan-Execute-Verify with a controller; closer to
+the Saga executor when the work has irreversible steps; closer to a
+Build Orchestrator when steps are repeatable. The defining property
+is that EXECUTION crosses out of the LLM layer into deterministic
+substrate.
+
+COMPOSES:
+- B4 PLAN MEMENTO -- plan persists outside the execution thread so
+  the verifier can re-read it without inheriting executor state.
+- S7 DETERMINISTIC TOOL BRIDGE -- every consequential step runs
+  through a typed tool, not LLM-asserted prose.
+- S4 VALIDATION DECORATOR -- the verifier step is itself a
+  deterministic check (another tool call against the system of
+  record), NOT a second LLM pass.
+- B10 HUMAN CHECKPOINT (optional but mandatory for irreversible
+  effects) -- gates destructive tool calls before they run.
+- A8 ALIGNMENT LOOP at the wrapping layer when the goal itself is
+  not deterministic (e.g. "deploy successfully" with retries on
+  recoverable failure).
+
+WHEN:
+- The work names a SYSTEM OF RECORD (db, repo, cluster, file
+  system, payment processor, queue) and a CONSEQUENTIAL ACTION
+  against it.
+- Reliability and auditability matter more than expressive
+  flexibility.
+- The action is irreversible OR triggers downstream effects you
+  cannot easily roll back.
+
+```mermaid
+flowchart LR
+  G[(GOAL +<br/>plan,<br/>persisted<br/>B4)] --> P[LLM: plan step<br/>compose tool calls]
+  P --> CHK[B10 human<br/>checkpoint?]
+  CHK -->|approve| T[(TOOL<br/>S7 bridge<br/>CLI / script / MCP / API)]
+  CHK -->|reject| END1[abort, escalate]
+  T ==> R[(RESULT<br/>structured)]
+  R --> V[(TOOL<br/>verifier<br/>S4 deterministic)]
+  V ==> OK{verify pass?}
+  OK -->|yes| DONE[ship]
+  OK -->|no| RETRY{retry budget?}
+  RETRY -->|yes| P
+  RETRY -->|no| END2[abort, escalate]
+```
+
+(Double-line `==>` edges denote tool-call results crossing into the
+LLM's next inference step; thin edges are LLM-internal control flow.
+See `mermaid-conventions.md`.)
+
+ANTI-PATTERNS:
+- PLAN-AND-PRAY -- plan is composed; execution is left as LLM
+  prose ("now apply the migration ..."). The migration never
+  actually runs; the LLM emits a plausible-looking success
+  message. Always bridge consequential steps via S7.
+- VERIFY-WITH-LLM-ONLY -- after a tool call, the verification step
+  asks the LLM "did it work?" and trusts its answer. The LLM
+  cannot read present state; verification must be another tool
+  call against the system of record.
+- UNCHECKPOINTED IRRECOVERABLE -- a destructive tool call (DROP,
+  force push, delete bucket, payment) without a B10 HUMAN
+  CHECKPOINT or a deterministic precondition gate. The selection
+  is still LLM-owned; one fabricated parameter and the action is
+  done.
+- HARNESS-LLM CONFLATION (architectural variant) -- the design
+  describes "the agent runs the migration". Redraw with the bridge
+  explicit: the LLM SELECTS the migration; the harness EXECUTES it
+  via a deterministic tool; the LLM INTERPRETS the result. Three
+  steps, two layers.
+- TOOLLESS PRECONDITION -- the design gates the destructive call
+  on a fact ("only if branch is main") and reads that fact from
+  LLM recall instead of from a tool call. The gate is theatre.
+  Bridge the precondition.
+
+SELECTION HEURISTIC: If the design's outcome is "X actually
+happened in system Y" (not "we claim X happened"), this is the
+shape. Pick A9 over plain A2 PIPELINE when at least one stage is a
+consequential side effect; A9 over A8 ALIGNMENT LOOP when the
+convergence criterion is a deterministic state, not goal alignment.
+
+---
+
 ## How Tier-3 patterns compose with each other
 
 Tier-3 patterns are not mutually exclusive. The canonical senior-
@@ -449,6 +532,10 @@ artifact is consequential and producer is biased by long context?
 
 work is creative, multi-round, with goal-drift risk?
   -> A8 ALIGNMENT LOOP (bound the rounds; steward + cold readers)
+
+work names a consequential side effect or a fact that must be true
+(deploy, migrate, delete, post, compute, verify a system fact)?
+  -> A9 SUPERVISED EXECUTION (plan -> deterministic tool -> verify)
 ```
 
 When two patterns fit, prefer the one that gives each thread a

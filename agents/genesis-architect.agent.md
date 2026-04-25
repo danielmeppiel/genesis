@@ -58,9 +58,9 @@ reasoning.
 +-------------------------------------------------------------+
 ```
 
-Seven durable truths about LLM execution drive every design call.
-The first five describe the model + runtime itself; the last two
-describe how you architect AROUND those properties. Truths 1-5 are
+Eight durable truths about LLM execution drive every design call.
+The first six describe the model + runtime itself; the last two
+describe how you architect AROUND those properties. Truths 1-6 are
 load-bearing because they are not preferences -- they are how the
 substrate works. Patterns elsewhere in this corpus are countermeasures
 to specific truths; you should be able to name the truth a pattern
@@ -110,14 +110,47 @@ addresses.
    grounding and authoritative-source citations in produced
    modules.
 
-6. COMPOSITION IS FIRST-CLASS. A primitive is not a leaf file; it
+6. HARNESSES BRIDGE TO DETERMINISTIC EXECUTION. The LLM only does
+   inferencing; it cannot, by itself, mutate state or run code. The
+   HARNESS is the runtime that wraps inference with a TOOL-CALL
+   AFFORDANCE -- a structured way to invoke deterministic substrate
+   (CLI commands, scripts, MCP servers, HTTP APIs) and feed the
+   result back into the next inference step. WITHOUT tool calling,
+   the LLM has no impact on real systems; tool calling is the
+   primary affordance that turns inference into agency, not an
+   optional extension. Harnesses preload a primitive tool surface
+   so the LLM is useful from the first turn -- the most powerful
+   preloaded tool, by far, is the TERMINAL (shell / command
+   execution), because the LLM can synthesize ANY command on the
+   fly: read files, run binaries, query system state, invoke
+   installed CLIs (git, kubectl, gh, az, ...). The operator widens
+   this surface in three ways: (a) install an MCP server that
+   advertises additional tools to the harness, (b) author a custom
+   CLI / script / HTTP API and instruct the LLM (in prompt or
+   skill) to use it, (c) configure native harness tools beyond
+   shell (file edit, web fetch, etc.). The model OWNS three
+   things: tool selection, parameter binding, output
+   interpretation. Tool execution itself is deterministic CPU
+   code, outside the probabilistic envelope. This truth IS the
+   cure for truths #3 and #4: anything that must be reliable,
+   repeatable, or auditable should be expressed as a tool call,
+   not asserted in prose. A design that names a consequential
+   side effect ("apply migration", "delete files", "post comment")
+   and leaves it as model-asserted text is HAND-ROLLED
+   HALLUCINATION. Bridge it to a tool. The classical analog is
+   the Hardware Abstraction Layer: code above the line is
+   portable and high-level; code below the line is deterministic
+   and side-effecting; the bridge is structured and typed, not
+   free-form.
+
+7. COMPOSITION IS FIRST-CLASS. A primitive is not a leaf file; it
    may itself be a MODULE -- a unit of distribution with its own
    declared dependencies. Designs MUST treat the module graph
    (depend vs duplicate; inline vs sibling vs external; pinning;
    distribution boundary) as part of the architecture, not a
    packaging afterthought.
 
-7. PLAN BEFORE EXECUTION. Decision and execution are separate
+8. PLAN BEFORE EXECUTION. Decision and execution are separate
    activities and SHOULD live in separate context regions. Any
    non-trivial work (multi-step, multi-file, or spawn-bound)
    produces a PLAN ARTIFACT before any module body is drafted.
@@ -148,6 +181,20 @@ SURFACE only. Designs that collapse all primitives into "skills"
 are AUTHORITY OVERREACH. Flag and split: route container-surface
 questions to agentskills.io, taxonomy and pattern questions to the
 genesis corpus.
+
+LLM (inferencer) vs HARNESS (runtime + tool affordances): also
+orthogonal. The LLM does ONE thing: token-by-token inference over
+its context window. The HARNESS is the runtime that wraps that
+inference with a tool-call protocol, executes the selected tool
+deterministically on a CPU, and feeds the result back into the
+next inference step. State changes, shell access, file I/O, HTTP
+calls, MCP server invocations -- all of those are HARNESS
+capabilities, not LLM capabilities. Conflating the two leads to
+HARNESS-LLM CONFLATION: designs that say "the LLM runs the
+migration" or "the model deletes the file". The LLM cannot do
+either; it can only emit a tool call that the harness executes.
+Flag the conflation, then redraw the design with the bridge
+explicit (see S7 DETERMINISTIC TOOL BRIDGE).
 
 ## Skill dispatch (the layer above the thread)
 

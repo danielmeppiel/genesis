@@ -28,8 +28,9 @@ name a countermeasure: the truth tells you which pattern is missing.
 |----------------------------------------|------------------------------------|------------------------------------------|
 | #1 CONTEXT IS FINITE AND FRAGILE       | attention drift; goal loss         | B4 PLAN MEMENTO + B8 ATTENTION ANCHOR    |
 | #2 CONTEXT MUST BE EXPLICIT            | tacit hand-off; assumed memory     | B4 PLAN MEMENTO; explicit handoff packet |
-| #3 OUTPUT IS PROBABILISTIC             | high-variance outputs              | S4 VALIDATION DECORATOR; deterministic   |
-|                                        |                                    | tools as truth anchors                   |
+| #3 OUTPUT IS PROBABILISTIC             | high-variance outputs              | S7 DETERMINISTIC TOOL BRIDGE; S4         |
+|                                        |                                    | VALIDATION DECORATOR (S7 is the primary  |
+|                                        |                                    | cure for consequential side effects)     |
 | #4 HALLUCINATION IS INHERENT           | fabricated facts in thin regions   | C2 PERSONA PRELOAD with GROUNDED EXPERT  |
 |                                        |                                    | BRIEFING; C6 EXTERNAL CORPUS GROUNDING;  |
 |                                        |                                    | A7 ADVERSARIAL REVIEW; B10 HUMAN         |
@@ -216,3 +217,46 @@ R1 SPLIT only if the remaining body still violates SRP.
 Anti-pattern: TRADEOFF SKIPPED. The handoff packet picks pattern X
 over Y without naming the axis. Reviewers cannot tell whether the
 choice was deliberate or accidental.
+
+---
+
+## 9. Execution doctrine (LLM-asserted vs tool-delegated)
+
+For each step in the design that produces a value or causes a side
+effect, decide where the work runs. This matrix prevents HAND-ROLLED
+HALLUCINATION (asserting an answer in prose when a tool could produce
+the actual answer).
+
+|                       | LLM-asserted (prose-only)             | Tool-delegated (S7 bridge)                  |
+|-----------------------|----------------------------------------|----------------------------------------------|
+| EAGER (run now)       | OK for: judgement calls, synthesis,    | OK for: reads against systems of record     |
+|                       | summary, plan composition, persona     | (current branch, file content, db row),     |
+|                       | output. NOT OK for: facts, side        | quick deterministic computations (hash,     |
+|                       | effects.                               | parse, lint).                                |
+| LAZY (run at invoke)  | OK for: deferred prose generation      | OK for: state-changing operations behind    |
+|                       | (description, body) gated by another   | B10 HUMAN CHECKPOINT or precondition gate;  |
+|                       | step. NOT OK for: anything claimed     | irreversible actions (deploy, migrate,      |
+|                       | "verified" in the body itself.         | delete, post, payment).                     |
+
+Selection rule (read top-down; first match wins):
+
+1. The step names a SIDE EFFECT against a system of record (file
+   system, repo, db, queue, cluster, external API).
+   -> Tool-delegated. If irreversible, gate with S4 precondition +
+   B10 HUMAN CHECKPOINT.
+2. The step depends on a FACT THAT MUST BE TRUE (current state,
+   versioned API shape, file content, hash).
+   -> Tool-delegated. LLM recall is not authoritative for present
+   state; truth #5 says pretraining is frozen.
+3. The step is COMPOSITION, JUDGEMENT, or LANGUAGE production
+   (rationale, summary, structured plan, persona output).
+   -> LLM-asserted. Bridging here loses the value the LLM brings.
+4. The step is "verify" or "double-check" of a tool output.
+   -> Tool-delegated by ANOTHER tool, not by the LLM (anti-pattern
+   VERIFY-WITH-LLM-ONLY). The LLM may INTERPRET the second tool's
+   output, but the verification itself is deterministic.
+
+Cite this matrix in the handoff packet's per-step annotation. Each
+step labelled "tool" must name the substrate (CLI / script / MCP /
+API). Each step labelled "LLM" must name what kind of judgement it
+performs.

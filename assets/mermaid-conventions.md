@@ -12,6 +12,7 @@ GitHub-render gotchas to avoid.
 | 3 | `sequenceDiagram` | thread spawn / fan-in / interlock points |
 | 3.5 | `flowchart LR` | dependency graph: this module + external modules + closure edges |
 | loop | `flowchart LR` | A8 ALIGNMENT LOOP body with B9 GOAL STEWARD gate, A7 cold-reader subgraph, B10 HUMAN CHECKPOINT escape, bounded round counter |
+| supervised | `flowchart LR` | A9 SUPERVISED EXECUTION: LLM plan node, S7 tool node (cylinder), S4 verifier tool, B10 checkpoint, retry budget |
 | optional | `classDiagram` | only when modeling true type hierarchies (rare for primitive design) |
 
 Keep each diagram under 25 nodes. Larger diagrams indicate the
@@ -149,12 +150,50 @@ MUST show:
 - Every primitive module the design depends on.
 - Every spawn / fan-in / interlock.
 - Whether each module is new or existing.
+- Every CROSSING into deterministic substrate (S7 DETERMINISTIC
+  TOOL BRIDGE). Tool-call results crossing back into the LLM's
+  next inference step use double-line edges (`==>`); thin single-
+  arrow edges (`-->`) stay LLM-internal.
 
 MUST NOT show:
 - Specific file paths or extensions (harness-specific).
 - Specific spawn-tool names (harness-specific).
 - Internal procedure steps inside one module (those belong in
   the module's natural-language body, drafted later).
+
+## Tool-call node convention (A9 / S7 diagrams)
+
+When a diagram crosses into deterministic substrate via a tool
+call:
+
+- Render the tool as a cylinder: `T[(TOOL<br/>label)]`. The label
+  names the SUBSTRATE category, not the harness syntax: one of
+  `CLI`, `script`, `MCP`, `API`. Example:
+  `T[(TOOL<br/>S7 bridge<br/>CLI / script / MCP / API)]`.
+- Use double-line `==>` for the edge that carries the tool's
+  RESULT into the LLM's next inference step. This is the visible
+  signal that the LLM is now interpreting deterministic output, not
+  generating it.
+- Use thin `-->` for LLM-internal control flow (plan -> select
+  tool -> emit invocation parameters).
+- Mark a B10 HUMAN CHECKPOINT before any irreversible tool call as
+  a diamond: `CHK{B10 human<br/>checkpoint}` with an `abort,
+  escalate` exit edge.
+- The verifier of an A9 SUPERVISED EXECUTION pattern is ITSELF a
+  tool node (S4 deterministic), never an LLM node. Diagrams that
+  show "LLM verifies" after a tool call are flagging
+  VERIFY-WITH-LLM-ONLY; redraw.
+
+Canonical fragment (lift into A9 designs):
+
+```
+flowchart LR
+  P[LLM: plan] --> CHK{B10 human<br/>checkpoint?}
+  CHK -->|approve| T[(TOOL<br/>S7 bridge)]
+  T ==> R[(RESULT)]
+  R --> V[(TOOL<br/>verifier S4)]
+  V ==> OK{pass?}
+```
 
 ## Output discipline
 

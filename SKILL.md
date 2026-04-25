@@ -210,6 +210,15 @@ composition modes from step 3.5), check:
   rule / asset? Apply R3 EXTRACT.
 - Does a thin proxy primitive exist with one caller and one
   reference? Apply R4 INLINE.
+- Does the body name a CONSEQUENTIAL SIDE EFFECT (apply, delete,
+  post, deploy, migrate, mutate state) or a FACT THAT MUST BE TRUE
+  (current state, version, hash, file content) and leave it as
+  LLM-asserted prose? If yes, that step MUST cross S7
+  DETERMINISTIC TOOL BRIDGE; pick the EXTENSION PATH (preloaded
+  terminal, custom CLI/script/API, or MCP server) per the S7
+  selection rule. Default to the preloaded terminal where an
+  installed CLI already does the job. Wrap with A9 SUPERVISED
+  EXECUTION when the work spans plan + execute + verify.
 See `assets/refactor-patterns.md` for the full trigger set.
 
 ### Step 5 - compliance check

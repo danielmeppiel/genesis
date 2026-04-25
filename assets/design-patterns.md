@@ -28,8 +28,8 @@ realize them in a specific harness.
     BRIEFING sub-rule)       VALIDATION DECORATOR      PLAN MEMENTO
    THREAD SPAWN              LAZY PROXY                ACCEPTANCE OBSERVER
    DESCRIPTION DISPATCH      RULE BRIDGE               PROMPT TEMPLATE
-   PERSONA PROTOTYPE                                   TODO COMMAND
-   EXTERNAL CORPUS                                     ATTENTION ANCHOR (*)
+   PERSONA PROTOTYPE         DETERMINISTIC TOOL        TODO COMMAND
+   EXTERNAL CORPUS            BRIDGE                   ATTENTION ANCHOR (*)
     GROUNDING                                          GOAL STEWARD
                                                        HUMAN CHECKPOINT
 ```
@@ -306,6 +306,137 @@ neither edits the other.
 
 ANTI-PATTERN: BAKED-IN RULES -- repeating the encoding rule inside
 every persona. Drift, then contradiction.
+
+---
+
+## S7. DETERMINISTIC TOOL BRIDGE
+
+CLASSICAL ANALOG: Adapter (GoF) at the language boundary; closer to
+a Hardware Abstraction Layer or FFI -- the structured seam between a
+high-level, probabilistic caller (the LLM) and a low-level,
+deterministic executor (CPU code: CLI, script, MCP server, HTTP API).
+
+WHEN: the design names a CONSEQUENTIAL SIDE EFFECT or a FACT THAT
+MUST BE TRUE. Examples: "apply database migration", "delete files",
+"read current branch", "post a comment on issue 42", "compute SHA-256
+of artifact". Anything where the answer must be the actual answer
+(not a plausible answer) and any state change that must actually
+happen (not be claimed to have happened).
+
+MECHANISM:
+
+1. NAME THE BOUNDARY. The design explicitly identifies which steps
+   are LLM-OWNED (selection, parameter binding, interpretation) and
+   which are TOOL-OWNED (execution).
+2. PICK THE SUBSTRATE. CLI command, script in a known language
+   (python, bash, go, etc.), MCP server, HTTP API. The substrate
+   is whatever the harness can already invoke; this pattern does
+   not introduce a new runtime.
+3. STRUCTURED CONTRACT. Inputs and outputs flow through a typed
+   interface (function signature, JSON schema, MCP tool spec). The
+   LLM sees the SCHEMA, not the implementation; the implementation
+   stays deterministic.
+4. INTERPRET, DO NOT EXECUTE. The LLM reads the tool's return value
+   and decides what to do next. It does not re-execute the tool's
+   logic in prose to "double-check" -- that re-introduces the
+   probabilism the bridge removes.
+5. PAIR WITH S4 (VALIDATION DECORATOR) WHERE WARRANTED. For
+   irreversible side effects, gate the tool call behind a
+   deterministic precondition check (also a tool call) and a
+   B10 HUMAN CHECKPOINT.
+
+DIFFERENCE FROM S2 (DEPENDENCY ADAPTER): S2 adapts ONE LLM-loaded
+module to ANOTHER LLM-loaded module's interface (text-to-text). S7
+crosses the LLM/CPU boundary itself (text-to-tool-call-to-CPU-to-
+text). They compose: S2 inside the LLM layer, S7 between layers.
+
+DIFFERENCE FROM S6 (RULE BRIDGE): S6 separates voice from constraint
+INSIDE the LLM context (both sides are still inferenced text). S7
+separates probabilistic reasoning from deterministic execution
+ACROSS the runtime boundary.
+
+ANTI-PATTERNS:
+
+- HAND-ROLLED HALLUCINATION. The design declares a side effect
+  ("update the deployment manifest") and leaves the LLM to emit the
+  edited file as text without invoking the underlying tool (git,
+  yq, kubectl). The "execution" is a high-variance regeneration of
+  the artifact. Bridge it: the LLM produces parameters; a
+  deterministic tool produces the output.
+- TOOLLESS ASSERTION. The design depends on a fact ("current branch
+  is main", "no migrations pending", "lockfile is up to date") and
+  takes the LLM's recall of that fact as authoritative. The fact
+  must come from a tool call, not memory.
+- OPAQUE TOOL. The bridge exists but the design hides what the
+  tool actually does, so reviewers cannot reason about determinism.
+  The handoff packet must name the tool, the substrate, and the
+  contract.
+- TOOL-CALL HALLUCINATION. The LLM emits a tool invocation against
+  a tool that does not exist or with parameters outside the
+  schema. Mitigation: the harness exposes only declared tools (the
+  schema is loaded into context), and S4 validates the parameter
+  shape before the call.
+- UNGUARDED DESTRUCTIVE TOOL. A bridge to an irreversible side
+  effect (DROP TABLE, force push, delete bucket) without a
+  precondition tool check AND a B10 HUMAN CHECKPOINT. The bridge
+  is deterministic at execution; the SELECTION is still LLM-owned
+  and probabilistic. Guard the selection.
+
+SELECTION HEURISTIC: If a design step contains the words "apply",
+"delete", "post", "deploy", "compute", "verify", or names a system
+of record (db, repo, queue, cluster, file system), it MUST cross
+S7. If a design step contains "decide", "compose", "summarize",
+"propose", "weigh", it stays in the LLM layer.
+
+EXTENSION PATHS (how the operator widens the bridge):
+
+The harness preloads a primitive tool surface so the LLM is useful
+from turn one. The TERMINAL (shell command execution) is the
+universal preloaded tool and the most powerful single one, because
+the LLM can synthesize ANY command on the fly -- read files, query
+state, invoke any installed CLI (`git`, `kubectl`, `gh`, `az`,
+`psql`, ...). A skill that needs determinism for a reachable
+operation should default to the terminal route before reaching for
+heavier extensions.
+
+Operators widen the bridge in three concrete routes; pick the
+narrowest one that fits:
+
+1. PRELOADED TERMINAL ROUTE (default). The skill instructs the LLM
+   to run a specific command via the harness's shell tool. Fast to
+   author, no new infrastructure. Use for: ad-hoc reads, local
+   checks, anything an installed CLI already exposes. Costs:
+   command output is unstructured text; arguments can drift; safety
+   is on the operator (hence S4 + B10 for destructive cases).
+2. CUSTOM CLI / SCRIPT / API ROUTE. The operator authors a
+   purpose-built executable (python script, shell wrapper, internal
+   HTTP endpoint, deterministic calculator) and the skill body
+   instructs the LLM to use it with a documented contract.
+   Trade-off: more structured than raw shell; lives outside the
+   harness's tool registry, so the LLM still emits it as a shell
+   invocation. Use when: the operation has a stable contract worth
+   naming and reusing across skills.
+3. MCP SERVER ROUTE. The operation is exposed by a Model Context
+   Protocol server; the harness advertises it to the LLM as a
+   first-class tool with a typed schema. Strongest typing,
+   discoverable in the harness UI, reusable across harnesses that
+   speak MCP. Costs: more infrastructure; appropriate for
+   operations consumed by many agents or that need centralized
+   policy.
+
+Selection rule: if a preloaded CLI already does it -> route 1. If
+an internal contract exists or is worth authoring -> route 2. If
+the tool will be reused across skills/harnesses or needs a typed
+schema for safe parameter binding -> route 3.
+
+ADDITIONAL ANTI-PATTERN:
+
+- TERMINAL UNDERUSE. The skill describes a check or read in prose
+  ("ensure the working tree is clean", "confirm the file exists")
+  when a one-line preloaded shell call (`git status --porcelain`,
+  `test -f path`) would settle it deterministically. The terminal
+  is right there; not using it is the most common form of HAND-
+  ROLLED HALLUCINATION.
 
 ---
 
