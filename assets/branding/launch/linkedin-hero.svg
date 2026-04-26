@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 628" width="1200" height="628"
      role="img"
-     aria-label="genesis -- a design discipline for agentic primitives. Install with: npx skills add danielmeppiel/genesis. 6 primitives, 9 architectural patterns, 23 design patterns, 4 refactor patterns.">
+     aria-label="genesis -- a design discipline for agentic primitives. Install with npx skills add danielmeppiel/genesis. 6 agent primitives, 9 architectural patterns, 23 design patterns, 4 refactor patterns.">
   <title>genesis launch hero</title>
 
   <rect width="1200" height="628" fill="#fcfcf6"/>
@@ -48,61 +48,57 @@
         font-size="30"
         fill="#fcfcf6">npx skills add danielmeppiel/genesis</text>
 
-  <!-- BOTTOM : toolbelt -->
-
-  <text x="80" y="408"
-        font-family="Menlo, 'SF Mono', Consolas, monospace"
-        font-weight="600"
-        font-size="13"
-        letter-spacing="2.5"
-        fill="#0d1117" opacity="0.55">WHAT SHIPS IN THE TOOLBELT</text>
-  <line x1="80" y1="420" x2="1120" y2="420" stroke="#0d1117" stroke-width="1" opacity="0.12"/>
-
-  <!-- row 1 : 6 primitives -->
-  <text x="158" y="464" text-anchor="end"
-        font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="40"
-        fill="#0d1117">6</text>
-  <text x="200" y="464"
-        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="20"
-        fill="#0d1117">primitives</text>
-  <text x="430" y="464"
-        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="400" font-size="16"
-        fill="#0d1117" opacity="0.62">the substrate every harness uses</text>
-
-  <!-- row 2 : 9 architectural -->
-  <text x="158" y="504" text-anchor="end"
-        font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="40"
-        fill="#0d1117">9</text>
-  <text x="200" y="504"
-        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="20"
-        fill="#0d1117">architectural</text>
-  <text x="430" y="504"
-        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="400" font-size="16"
-        fill="#0d1117" opacity="0.62">system-shape patterns</text>
-
-  <!-- row 3 : 23 design -->
-  <text x="158" y="544" text-anchor="end"
-        font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="40"
-        fill="#0d1117">23</text>
-  <text x="200" y="544"
-        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="20"
-        fill="#0d1117">design</text>
-  <text x="430" y="544"
-        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="400" font-size="16"
-        fill="#0d1117" opacity="0.62">6 creational + 7 structural + 10 behavioral</text>
-
-  <!-- row 4 : 4 refactor -->
-  <text x="158" y="584" text-anchor="end"
-        font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="40"
-        fill="#0d1117">4</text>
-  <text x="200" y="584"
-        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="20"
-        fill="#0d1117">refactor</text>
-  <text x="430" y="584"
-        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="400" font-size="16"
-        fill="#0d1117" opacity="0.62">Fowler-style moves for skill drift</text>
-
-  <!-- chartreuse brand whisper : a hairline accent under the install panel, right-aligned -->
+  <!-- chartreuse brand whisper under install panel -->
   <rect x="1080" y="370" width="40" height="3" fill="#daf172"/>
+
+  <!-- BOTTOM : 4-column stat block (no header, no descriptors) -->
+  <!-- column centers at x = 210, 470, 730, 990 -->
+
+  <!-- numbers : Georgia serif, large, baseline y=500 -->
+  <text x="210" y="500" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="86"
+        fill="#0d1117">6</text>
+  <text x="470" y="500" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="86"
+        fill="#0d1117">9</text>
+  <text x="730" y="500" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="86"
+        fill="#0d1117">23</text>
+  <text x="990" y="500" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="86"
+        fill="#0d1117">4</text>
+
+  <!-- names : monospace bold, two lines per column -->
+  <!-- col 1 : agent primitives -->
+  <text x="210" y="554" text-anchor="middle"
+        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="22"
+        fill="#0d1117">agent</text>
+  <text x="210" y="584" text-anchor="middle"
+        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="22"
+        fill="#0d1117">primitives</text>
+
+  <!-- col 2 : architectural patterns -->
+  <text x="470" y="554" text-anchor="middle"
+        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="22"
+        fill="#0d1117">architectural</text>
+  <text x="470" y="584" text-anchor="middle"
+        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="22"
+        fill="#0d1117">patterns</text>
+
+  <!-- col 3 : design patterns -->
+  <text x="730" y="554" text-anchor="middle"
+        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="22"
+        fill="#0d1117">design</text>
+  <text x="730" y="584" text-anchor="middle"
+        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="22"
+        fill="#0d1117">patterns</text>
+
+  <!-- col 4 : refactor patterns -->
+  <text x="990" y="554" text-anchor="middle"
+        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="22"
+        fill="#0d1117">refactor</text>
+  <text x="990" y="584" text-anchor="middle"
+        font-family="Menlo, 'SF Mono', Consolas, monospace" font-weight="700" font-size="22"
+        fill="#0d1117">patterns</text>
 
 </svg>

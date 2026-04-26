@@ -13,7 +13,7 @@ Three-band composition tuned for LinkedIn feed scanning:
 
 1. **Identity band** -- logomark + wordmark + two-line tagline (the README H1).
 2. **Install band** -- the `npx skills add danielmeppiel/genesis` command rendered as a real terminal panel. The CTA is the centerpiece.
-3. **Toolbelt band** -- four tiered rows showing the catalogue: 6 primitives, 9 architectural patterns, 23 design patterns, 4 refactor moves. Serif numerals give the column its visual rhythm.
+3. **Toolbelt** -- four-column stat block (number + two-line name) showing the catalogue: 6 agent primitives, 9 architectural patterns, 23 design patterns, 4 refactor patterns. Serif numerals are the eye-catchers; monospace names anchor them. No header, no descriptors -- the layout is self-explanatory.
 
 ## palette and type
 
