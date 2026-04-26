@@ -173,7 +173,13 @@ rationale:
 - INLINE asset within this primitive (default for content unique
   to this module).
 - LOCAL SIBLING primitive in the same source tree (default when
-  the content is reused only within this project).
+  the content is reused only within this project). Before placing
+  it, ask: does the USER-FACING bundle need this AT RUNTIME? If
+  no (eval scenarios, contributor scripts, dev fixtures), it is
+  maintainer-scope -- place it OUTSIDE the user-facing module's
+  distribution boundary (contributor-only directory). Otherwise
+  the module ships with BUNDLE LEAKAGE (see
+  composition-substrate.md anti-patterns).
 - EXTERNAL MODULE pulled in via the project's module system
   (default when the content meets at least one of: rule of three
   -- needed in 3+ projects; independent release cadence; owned by

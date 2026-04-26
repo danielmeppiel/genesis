@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Genesis eval scenario",
+  "description": "Single scenario file for genesis-evals. One YAML per scenario. The 'model' field is REQUIRED -- the runner refuses to spawn without it.",
+  "type": "object",
+  "required": ["id", "category", "description", "prompt", "model", "pass_gate", "frozen_since"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[pnr]-[0-9]{3}-[a-z0-9-]+$",
+      "description": "category-letter + 3-digit ord + kebab slug (e.g. p-001-a10-recognition)"
+    },
+    "category": {
+      "enum": ["P", "N", "R"],
+      "description": "P=positive value-add (with vs without skill); N=near-miss / dispatch hygiene (skill loaded must NOT activate); R=regression (zero tolerance)"
+    },
+    "description": {"type": "string", "maxLength": 200},
+    "prompt": {"type": "string", "minLength": 10},
+    "model": {
+      "type": "string",
+      "minLength": 1,
+      "description": "REQUIRED. Model id requested for the cold sub-agent. Runner refuses to spawn if omitted. No silent default."
+    },
+    "loaded_skills": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Skills to load in the cold sub-agent. For P with-half, include 'genesis'; for P without-half, omit. For N: include 'genesis' (testing dispatch hygiene). For R: as needed."
+    },
+    "pass_gate": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {"enum": ["substring_all", "substring_any", "substring_none"]},
+        "with_skill_must_contain": {"type": "array", "items": {"type": "string"}},
+        "with_skill_must_not_contain": {"type": "array", "items": {"type": "string"}},
+        "without_skill_must_contain": {"type": "array", "items": {"type": "string"}},
+        "without_skill_must_not_contain": {"type": "array", "items": {"type": "string"}},
+        "single_must_contain": {"type": "array", "items": {"type": "string"}},
+        "single_must_not_contain": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "frozen_since": {
+      "type": "string",
+      "description": "Genesis version at which this scenario was added. Provenance only; not enforced at runtime."
+    },
+    "retired_in": {
+      "type": ["string", "null"],
+      "description": "Genesis version at which this scenario was retired. If non-null, runner skips it."
+    },
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": false
+}

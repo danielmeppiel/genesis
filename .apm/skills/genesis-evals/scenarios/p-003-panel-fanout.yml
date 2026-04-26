@@ -1,0 +1,28 @@
+id: p-003-panel-fanout
+category: P
+description: >-
+  Designing a multi-expert review panel. With-genesis must reach for
+  A1 PANEL with parallel cold-spawn fan-out (B1). Without-genesis tends
+  to propose sequential single-loop review.
+prompt: |
+  I want a code-review skill that gathers feedback from THREE different
+  expert personas (security, performance, API design) and produces a single
+  consolidated verdict. How should I architect this?
+model: claude-opus-4.7
+loaded_skills:
+  - genesis
+pass_gate:
+  type: substring_all
+  with_skill_must_contain:
+    - A1
+    - PANEL
+  with_skill_must_not_contain: []
+  without_skill_must_contain: []
+  without_skill_must_not_contain:
+    - A1 PANEL
+frozen_since: "0.1.0"
+retired_in: null
+notes: >-
+  With-half: A1 PANEL (parallel cold-spawn) should be named explicitly.
+  Without-half: an LLM without genesis may design a panel but should not
+  use the A1 label.

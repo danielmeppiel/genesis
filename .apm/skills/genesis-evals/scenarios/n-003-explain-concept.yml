@@ -1,0 +1,23 @@
+id: n-003-explain-concept
+category: N
+description: >-
+  Genesis loaded but task is a generic concept explanation. Skill MUST
+  NOT activate.
+prompt: |
+  Can you explain how Python decorators work, with a small example?
+model: claude-opus-4.7
+loaded_skills:
+  - genesis
+pass_gate:
+  type: substring_all
+  single_must_not_contain:
+    - Step 1
+    - "agentic primitive"
+    - "design artifact"
+    - "composition substrate"
+    - "A1 PANEL"
+frozen_since: "0.1.0"
+retired_in: null
+notes: >-
+  Pure conceptual explanation. No agent / primitive / module design.
+  Genesis vocabulary leaking indicates over-eager activation.

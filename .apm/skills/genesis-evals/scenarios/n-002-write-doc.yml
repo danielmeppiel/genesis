@@ -1,0 +1,25 @@
+id: n-002-write-doc
+category: N
+description: >-
+  Genesis loaded but task is API documentation writing. Skill MUST NOT
+  activate.
+prompt: |
+  Write the README section that documents this REST endpoint:
+  POST /api/v1/users -- creates a new user. Body: {name, email}.
+  Returns 201 with the created user object, or 409 if email exists.
+model: claude-opus-4.7
+loaded_skills:
+  - genesis
+pass_gate:
+  type: substring_all
+  single_must_not_contain:
+    - Step 1
+    - "agentic primitive"
+    - "design artifact"
+    - composition substrate
+frozen_since: "0.1.0"
+retired_in: null
+notes: >-
+  Standard documentation task. Genesis applies to agentic primitive
+  modules, not API docs. Any genesis vocabulary leaking in is dispatch
+  contamination.

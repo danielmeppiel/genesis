@@ -125,6 +125,25 @@ no transitive surface, no governance overhead.
 - TOOL LEAK: the architect or skill body naming a specific
   manifest filename / CLI command instead of using these durable
   concepts.
+- BUNDLE LEAKAGE: non-runtime files colocated INSIDE the module's
+  distribution boundary (eval scenarios, contributor scripts, dev
+  notes, scratch fixtures). The symmetric counterpart of PHANTOM
+  DEPENDENCY (referenced-but-not-bundled): bundled-but-not-
+  consumed-at-runtime. Two failure shapes:
+  - PAYLOAD BLOAT: the user-facing bundle inflates with files no
+    runtime path reads. Distribution cost without distribution
+    benefit.
+  - DISPATCH CONTAMINATION: an over-eager harness loader, asset
+    discovery routine, or LLM-driven file picker matches against
+    these maintainer-scope files (eval prompts especially LOOK
+    LIKE real user requests) and pulls them into the active
+    context. The active session reasons against the wrong text.
+    This is a REAL hallucination amplifier, not just an aesthetic
+    issue.
+  Cure: ship-time scope vs run-time scope. Maintainer-only assets
+  live OUTSIDE the user-facing module entrypoint -- in a
+  contributor-only directory (e.g. `.apm/skills/<module>-<role>/`)
+  whose distribution boundary excludes them.
 
 ---
 

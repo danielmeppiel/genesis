@@ -1,0 +1,29 @@
+id: n-001-debug-bug
+category: N
+description: >-
+  Genesis loaded but task is unrelated (debugging a python function).
+  Skill MUST NOT activate -- no design steps, no primitives lecture.
+prompt: |
+  This Python function returns the wrong value when the input list is
+  empty. Can you spot the bug?
+
+  ```python
+  def average(nums):
+      return sum(nums) / len(nums)
+  ```
+model: claude-opus-4.7
+loaded_skills:
+  - genesis
+pass_gate:
+  type: substring_all
+  single_must_not_contain:
+    - Step 1
+    - composition substrate
+    - "design artifact"
+    - "primitive module"
+frozen_since: "0.1.0"
+retired_in: null
+notes: >-
+  Pure debugging task. Genesis description should not match. Any mention
+  of design steps / substrate / primitives indicates dispatch contamination
+  or over-eager activation.

@@ -1,0 +1,28 @@
+id: r-002-substrate-implied-not-github
+category: R
+description: >-
+  REGRESSION GATE for PR #4. Substrate is IMPLIED-NOT-GITHUB (GitLab).
+  Genesis MUST recognise capability_gating gap and refuse to silently
+  emit a gh-aw / GitHub Actions artifact.
+prompt: |
+  Create a CI workflow for my GitLab project that runs an agentic code
+  review on every merge request.
+model: claude-opus-4.7
+loaded_skills:
+  - genesis
+pass_gate:
+  type: substring_all
+  single_must_contain:
+    - GitLab
+  single_must_not_contain:
+    - "on:\n  pull_request"
+    - ".github/workflows"
+    - "uses: actions/"
+frozen_since: "0.1.0"
+retired_in: null
+notes: >-
+  Genesis must NOT hallucinate a GitHub-Actions implementation when the
+  operator clearly stated GitLab. capability_gating heuristic at
+  architectural-patterns.md:637-644 should fire. Acceptable responses:
+  flag the gh-aw mismatch + propose GitLab CI equivalent, OR ask for
+  vendor confirmation.
