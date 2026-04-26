@@ -191,7 +191,7 @@ Genesis maps the Gang-of-Four onto agent design. The classical name is your Rose
 
 **[Attention Anchor](assets/design-patterns.md#b8-attention-anchor) has no classical counterpart -- it exists because LLM attention degrades over distance.** Without periodic re-injection of goal and hard constraints, long sessions silently drift from the original intent. It is the highest-leverage behavioral pattern for any non-trivial agent task.
 
-Full catalogue (19 design patterns + 6 architectural patterns + 4 refactor patterns): [`assets/design-patterns.md`](assets/design-patterns.md), [`assets/architectural-patterns.md`](assets/architectural-patterns.md), [`assets/refactor-patterns.md`](assets/refactor-patterns.md).
+Full catalogue (23 design patterns + 9 architectural patterns + 4 refactor patterns): [`assets/design-patterns.md`](assets/design-patterns.md), [`assets/architectural-patterns.md`](assets/architectural-patterns.md), [`assets/refactor-patterns.md`](assets/refactor-patterns.md).
 
 ---
 
