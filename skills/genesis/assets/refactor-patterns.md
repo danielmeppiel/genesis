@@ -133,6 +133,10 @@ TRIGGERS (any one fires):
   body now plays two roles.
 - REUSE PRESSURE. The inlined content would be useful to a sibling
   module that does not currently load this one.
+- MAINTAINER-ONLY CONTENT. The inlined content has no run-time
+  consumer in the user-facing bundle (eval scenarios, contributor
+  scripts, dev fixtures) but is structurally shaped like a primitive
+  (e.g. a SKILL.md whose description LOOKS LIKE a real user request).
 
 PROCEDURE:
 1. Lift the content into its own primitive at the right tier (PERSONA
@@ -154,6 +158,14 @@ ANTI-PATTERN (PROMOTION-WITHOUT-NEED): extracting content whose only
 caller is and will remain the original module, where the rule of three
 will plausibly never fire. Each extraction adds a file to maintain and
 a load step to pay. See `composition-substrate.md` PROMOTION RULE.
+
+NOTE: when the trigger is MAINTAINER-ONLY CONTENT, the extracted
+primitive MUST be placed OUTSIDE the user-facing module's
+distribution surface (a contributor-only directory whose distribution
+boundary excludes it). Otherwise the extraction creates BUNDLE
+LEAKAGE: see `composition-substrate.md` "Anti-patterns flagged at
+this step". The package-manager realization of this rule lives in
+`module-system-adapters/apm.md` "APM publish-time rules".
 
 ---
 

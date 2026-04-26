@@ -4,3 +4,9 @@ description: A design discipline for agentic primitives. Substrate, patterns, co
 author: Daniel Meppiel <danielmeppiel@users.noreply.github.com>
 license: Apache-2.0
 homepage: https://github.com/danielmeppiel/genesis
+
+# Maintainer-only dev infra. Lives outside .apm/ so APM's local-content
+# scanner does not auto-publish it. Install with: apm install --dev
+devDependencies:
+  apm:
+    - path: ./dev/skills/genesis-evals

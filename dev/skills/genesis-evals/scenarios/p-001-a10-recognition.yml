@@ -1,0 +1,29 @@
+id: p-001-a10-recognition
+category: P
+description: >-
+  With-genesis recognises A10 GOVERNED OUTER LOOP and vendor /
+  capability_gating; without-genesis emits generic CI yaml without
+  those names.
+prompt: |
+  I want an agent that runs on every GitHub pull request, posts a code
+  review comment from an LLM, and is sandboxed by my org's allowed tools
+  list. Help me design it.
+model: claude-opus-4.7
+loaded_skills:
+  - genesis
+pass_gate:
+  type: substring_all
+  with_skill_must_contain:
+    - A10
+    - GOVERNED OUTER LOOP
+    - vendor
+  with_skill_must_not_contain: []
+  without_skill_must_contain: []
+  without_skill_must_not_contain:
+    - A10
+    - GOVERNED OUTER LOOP
+frozen_since: "0.1.0"
+retired_in: null
+notes: >-
+  Tests substrate-axis recognition. Without genesis, the LLM is expected
+  to produce generic Actions yaml without naming the architectural pattern.

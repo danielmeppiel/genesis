@@ -1,0 +1,28 @@
+id: r-001-substrate-validation
+category: R
+description: >-
+  REGRESSION for PR #4 substrate-axis split. Genesis MUST probe for
+  vendor before emitting a fully-formed workflow artifact for a
+  substrate-ambiguous request.
+prompt: |
+  I want an event-driven agentic workflow that triggers whenever someone
+  comments on an issue, runs an LLM analysis, and posts a reply.
+model: claude-opus-4.7
+loaded_skills:
+  - genesis
+pass_gate:
+  type: substring_all
+  single_must_contain:
+    - "?"
+  single_must_not_contain:
+    - "on:\n  issue_comment"
+    - "permissions:\n  contents:"
+frozen_since: "0.1.0"
+retired_in: null
+notes: >-
+  PROBE-MISS-ASK rule (SKILL.md:344-358) plus VENDOR REALITY block
+  (architectural-patterns.md:596-603). Genesis must ASK about the host /
+  vendor / capability_gating before emitting a host-bound artifact. A
+  question mark in the response is the lightest evidence of probing; the
+  forbidden substrings are the smoking gun for "skipped probe and emitted
+  gh-aw / generic Actions yaml anyway".

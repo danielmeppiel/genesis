@@ -287,6 +287,13 @@ on demand. Both cooperate: declare with C1, reference with S5.
 ANTI-PATTERN: PROXY SPRAWL -- pointers to pointers to pointers.
 Materialize in a single hop where possible.
 
+ORTHOGONAL TO DISTRIBUTION BOUNDARY: load-on-demand does NOT cross
+the distribution boundary. A lazily-loaded asset still ships inside
+the module's published bundle; deferring its load only changes when
+the agent reads it, not whether it is packaged. For the orthogonal
+question of WHICH files ship at all, see `composition-substrate.md`
+BUNDLE LEAKAGE.
+
 ---
 
 ## S6. RULE BRIDGE

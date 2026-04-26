@@ -1,0 +1,28 @@
+id: n-002-write-doc
+category: N
+description: >-
+  Genesis loaded but task is API documentation writing. Skill MUST NOT
+  activate.
+prompt: |
+  Write the README section that documents this REST endpoint:
+  POST /api/v1/users -- creates a new user. Body: {name, email}.
+  Returns 201 with the created user object, or 409 if email exists.
+model: claude-opus-4.7
+loaded_skills:
+  - genesis
+pass_gate:
+  type: substring_all
+  single_must_not_contain:
+    - Step 1
+    - "design artifact"
+    - composition substrate
+    - "R1 SPLIT"
+    - "A10 GOVERNED"
+    - "A1 PANEL"
+frozen_since: "0.1.0"
+retired_in: null
+notes: >-
+  Standard documentation task. Genesis applies to agentic primitive
+  modules, not API docs. Forbidden substrings are skill-internal vocabulary
+  (Step 1, codified pattern names, asset terms) that only appear on
+  activation. Scope-naming in a polite decline is correct behavior.

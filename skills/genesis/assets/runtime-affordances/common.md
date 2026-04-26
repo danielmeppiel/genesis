@@ -95,15 +95,41 @@ in response to an external event (timer, repository event, webhook,
 user invocation). Lives outside any single session; it is the entry
 point that creates sessions in the first place.
 
-Substrate fields:
+Substrate fields (always present):
 - a trigger declaration (event, schedule, or interactive)
-- a session bootstrap (initial task, initial persona / skill set)
+- a session bootstrap (initial task, initial persona / skill set).
+  When the bootstrap is a markdown entrypoint instantiated by the
+  trigger surface, that file is a SUBSTRATE-INVOKED MODULE
+  ENTRYPOINT (see `primitives.md` MODULE ENTRYPOINT, BINDING
+  MODES). Same primitive shape; the trigger surface, not the
+  in-session dispatcher, is the matcher.
 - output channel (where the session's results go)
+
+Substrate fields (optional, present only when the trigger surface
+provides them; see `per-trigger-surface/` adapters):
+- SANDBOXING -- substrate-enforced isolation around the spawned
+  session (network firewall, per-tool container, etc.). When
+  absent, the session inherits whatever ambient access the
+  invoking environment has.
+- CAPABILITY_GATING -- the session does NOT hold write tokens to
+  external systems; effects are buffered and externalized by a
+  deterministic post-stage that the session cannot bypass. The
+  runtime-enforced form of A9 SUPERVISED EXECUTION (see
+  `architectural-patterns.md`).
+- AUDIT_SURFACE -- a durable log of what triggered, what ran, what
+  was externalized; survives the session and is reviewable by
+  third parties.
 
 Substrate behavior:
 - Each trigger creates a NEW session. Sessions are stateless across
   triggers unless persistence is engineered explicitly (pattern
   ORCHESTRATOR-SAGA in architectural-patterns.md).
+- Trigger surface is ORTHOGONAL to agent inference harness. A
+  single trigger orchestrator (e.g. GitHub Agentic Workflows) may
+  dispatch any of several inference harnesses (Claude Code, Codex)
+  inside the same trigger run. Per-harness adapters describe WHO
+  infers; per-trigger-surface adapters describe WHAT spawns the
+  session. Do not collapse the two axes.
 
 ### 6. PLAN PERSISTENCE
 
@@ -199,3 +225,14 @@ choice MUST be declared in the primitive's design (see
 
 See `per-harness/` for the harness-specific mappings. Each adapter
 is structured to map back to the six concepts above, in order.
+
+## Index of per-trigger-surface adapters
+
+See `per-trigger-surface/` for the trigger-vendor mappings. These
+describe WHAT spawns the session and (where the surface offers it)
+how SANDBOXING / CAPABILITY_GATING / AUDIT_SURFACE substrate fields
+are realized. Per-trigger-surface adapters compose with per-harness
+adapters: a single primitive may declare both a trigger-surface
+target (e.g. gh-aw) and an inference-harness target (e.g. claude-
+code) and the substrate concepts stay portable across the
+combinations the matrix supports.

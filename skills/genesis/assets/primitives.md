@@ -95,6 +95,38 @@ KEY PROPERTY: the frontmatter description is preloaded by the harness
 into every session. It is the function signature the dispatcher LLM
 matches against. Treat it as code, not as marketing copy.
 
+BINDING MODES. A MODULE ENTRYPOINT can be bound into a thread two
+distinct ways. Same primitive shape (markdown + frontmatter + body
++ lazy assets); different binding determines the substrate fields
+in play.
+
+1. AGENT-INVOKED (default; the agentskills.io case)
+   The harness's dispatcher LLM matches the entrypoint's
+   `description` against the live session and lazy-loads the body
+   as ADDITIVE context mid-session. The session was rooted by
+   something else (operator prompt, slash command, prior turn).
+   The KEY PROPERTY above governs: description is a function
+   signature, dispatcher matches it.
+
+2. SUBSTRATE-INVOKED (the trigger-orchestrator case)
+   A TRIGGER ORCHESTRATOR (substrate primitive #5; see
+   `runtime-affordances/common.md`) instantiates the entrypoint
+   as the session ROOT in response to an external event. The body
+   is the initial task; the dispatcher does not match anything --
+   the trigger surface IS the matcher (event filter, slash
+   command, schedule). Substrate fields like SANDBOXING,
+   CAPABILITY_GATING, AUDIT_SURFACE may apply (when the trigger
+   surface provides them; see per-trigger-surface adapters).
+
+The substrate-invoked binding is the corpus mechanism that lets
+patterns A6 EVENT-DRIVEN and A10 GOVERNED OUTER LOOP (see
+`architectural-patterns.md`) reuse the entrypoint primitive
+instead of inventing a new "workflow file" type. When you design
+an entrypoint for substrate invocation, the per-trigger-surface
+adapter (e.g. `runtime-affordances/per-trigger-surface/gh-aw.md`)
+prescribes the frontmatter shape; the body still follows the same
+authoring discipline as any other entrypoint.
+
 ---
 
 ## 3. SCOPE-ATTACHED RULE FILE

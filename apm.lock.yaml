@@ -1,0 +1,11 @@
+lockfile_version: '1'
+generated_at: '2026-04-26T11:12:53.114123+00:00'
+apm_version: 0.10.0
+dependencies:
+- repo_url: _local/genesis-evals
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/genesis-evals
+  source: local
+  local_path: ./dev/skills/genesis-evals
+  is_dev: true

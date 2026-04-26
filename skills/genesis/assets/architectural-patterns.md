@@ -26,6 +26,7 @@ rediscovering its failure modes the hard way.
 | ADVERSARIAL REVIEW    | Code Review + Red Team      | B1 + N x C2 + S4 + cold-context spawn        |
 | ALIGNMENT LOOP        | Iteration with stop-condition | A1 (or A2) + B4 + B9 + B10 + bounded loop  |
 | SUPERVISED EXECUTION  | Plan-Execute-Verify (controller) | B4 + S7 + S4 + (optional) B10            |
+| GOVERNED OUTER LOOP   | CI/CD + capability-bounded service account | A6 + strong-form A9 + sandbox + audit |
 
 ---
 
@@ -245,6 +246,17 @@ ANTI-PATTERNS:
 CLASSICAL ANALOG: Event-Driven Architecture -- producers emit events;
 handlers react asynchronously; loose coupling between them.
 
+STOP -- DECISION GATE BEFORE LANDING ON A6:
+A6 is the GENERAL event-reactive shape. If the request also names
+ANY of: `audit`, `auditable`, `compliance`, `sandbox`/`sandboxed`,
+`no-token`/`must not hold`, `capability-gating`, `governed`, then
+the more specific pattern A10 GOVERNED OUTER LOOP applies and
+MUST be co-named (or selected over) A6. A10 inherits A6's event
+surface and adds substrate-enforced strong-form A9 + sandboxing
++ audit. Picking A6 alone in this case is an architectural error:
+it leaves the substrate guarantees the request explicitly asked
+for unrealized. See A10 below.
+
 COMPOSES:
 - TRIGGER ORCHESTRATOR (substrate) as the event surface
 - Any Tier-2 mix as the handler body
@@ -404,6 +416,40 @@ Build Orchestrator when steps are repeatable. The defining property
 is that EXECUTION crosses out of the LLM layer into deterministic
 substrate.
 
+A9 has TWO ENFORCEMENT FORMS. They differ in WHO holds the
+capability to externalize.
+
+WEAK FORM (prose-enforced supervision)
+The skill body asks the agent to plan, then call a tool, then
+verify. The agent HOLDS the write capability throughout; the
+discipline is contractual ("you must verify before declaring
+done"). Adequate for in-session work where the operator is the
+auditor and a misstep is recoverable. Default for inner-loop
+agents on a developer laptop.
+
+STRONG FORM (runtime-enforced supervision)
+The substrate denies the write capability to the agent. The agent
+emits buffered outputs; a deterministic post-stage applies them
+under declared filters that the agent cannot bypass. Even a fully
+compromised agent cannot externalize beyond what the post-stage
+permits. Requires a trigger surface that exposes the substrate
+field CAPABILITY_GATING (see `../runtime-affordances/common.md`
+TRIGGER ORCHESTRATOR optional fields).
+
+CANONICAL STRONG-FORM REALIZATION: GitHub Agentic Workflows'
+SafeOutputs subsystem. The agent never holds a GitHub write token;
+its emitted outputs are buffered as artifacts and applied by a
+deterministic stage with structural and policy filters. See
+`../runtime-affordances/per-trigger-surface/gh-aw.md`.
+
+PREFERENCE RULE: when the trigger surface offers strong-form A9,
+USE IT. Weak-form A9 is a fallback for environments without
+runtime capability_gating, not a stylistic alternative. A design
+that picks weak-form on a strong-form-capable surface (e.g.
+"agent calls gh CLI to comment on the PR" inside a gh-aw
+workflow) is leaving substrate-level safety on the table; flag
+this in review.
+
 COMPOSES:
 - B4 PLAN MEMENTO -- plan persists outside the execution thread so
   the verifier can re-read it without inheriting executor state.
@@ -413,7 +459,9 @@ COMPOSES:
   deterministic check (another tool call against the system of
   record), NOT a second LLM pass.
 - B10 HUMAN CHECKPOINT (optional but mandatory for irreversible
-  effects) -- gates destructive tool calls before they run.
+  effects in the WEAK FORM; STRONG FORM may substitute the
+  capability_gating filter for the checkpoint when the externalizer
+  guarantees idempotency or reversibility).
 - A8 ALIGNMENT LOOP at the wrapping layer when the goal itself is
   not deterministic (e.g. "deploy successfully" with retries on
   recoverable failure).
@@ -475,6 +523,125 @@ happened in system Y" (not "we claim X happened"), this is the
 shape. Pick A9 over plain A2 PIPELINE when at least one stage is a
 consequential side effect; A9 over A8 ALIGNMENT LOOP when the
 convergence criterion is a deterministic state, not goal alignment.
+When the work is event-triggered AND requires audit + capability
+bounding, escalate to A10 GOVERNED OUTER LOOP, which composes
+strong-form A9 with TRIGGER ORCHESTRATOR-with-sandbox.
+
+---
+
+## A10. GOVERNED OUTER LOOP
+
+CLASSICAL ANALOG: a CI/CD pipeline backed by a capability-bounded
+service account. The job has just enough permission to do the
+declared work, the surface that holds the credentials is not the
+surface that runs the user's code, and every run leaves a durable
+audit trail.
+
+The defining property: an event-triggered, sandboxed, capability-
+gated agent run whose externalizations are mediated by a
+deterministic post-stage and whose entire trace survives the
+session. The agent NEVER holds the write tokens for its declared
+externalization targets.
+
+COMPOSES:
+- TRIGGER ORCHESTRATOR (substrate primitive #5) WITH the optional
+  fields SANDBOXING, CAPABILITY_GATING, and AUDIT_SURFACE all
+  populated by the trigger surface. See
+  `../runtime-affordances/common.md` and the relevant adapter in
+  `../runtime-affordances/per-trigger-surface/`.
+- STRONG FORM of A9 SUPERVISED EXECUTION -- because
+  CAPABILITY_GATING is the defining substrate field, the
+  enforcement form is runtime-enforced by construction.
+- A6 EVENT-DRIVEN as the macro topology. A10 is a SPECIALIZATION
+  of A6 with three named guarantees added; non-governed
+  event-driven work stays at A6.
+
+WHEN:
+- Work is reactive to an external event (PR opened, comment with
+  label, schedule fires, issue created).
+- The agent must externalize state to a system of record (post a
+  comment, file a ticket, create a PR, label an issue).
+- The operator's threat model includes a compromised or off-task
+  agent; the system must not depend on the agent's good behavior
+  for the bound on what gets externalized.
+- An auditor (security, compliance, manager, future maintainer)
+  must be able to reconstruct what fired, what ran, and what was
+  written, after the fact.
+
+```mermaid
+flowchart LR
+  E[event:<br/>PR opened /<br/>comment /<br/>schedule] --> T[(TRIGGER<br/>SURFACE<br/>sandboxed)]
+  T --> S[agent session<br/>NO write token]
+  S ==> B[(BUFFERED<br/>OUTPUTS)]
+  B --> F[deterministic<br/>post-stage<br/>filters]
+  F ==> X[(EXTERNALIZE<br/>to system of<br/>record)]
+  T -. emits .-> A[(AUDIT<br/>SURFACE<br/>durable log)]
+  S -. emits .-> A
+  F -. emits .-> A
+```
+
+(Double-line `==>` edges denote tool-call results / artifacts
+crossing into the next deterministic stage; thin edges are
+LLM-internal control flow or audit emission. See
+`mermaid-conventions.md`.)
+
+CANONICAL REALIZATION: GitHub Agentic Workflows (gh-aw) on GitHub
+Actions runners. The trigger surface IS the substrate that supplies
+SANDBOXING (firewall + MCP gateway + per-tool containers),
+CAPABILITY_GATING (`safe-outputs:` subsystem), and AUDIT_SURFACE
+(Actions logs). The inference harness is independently chosen
+(Claude Code OR Codex) per the substrate's harness orthogonality
+rule. See `../runtime-affordances/per-trigger-surface/gh-aw.md`.
+
+VENDOR REALITY: A10 is GitHub-specific only in its CHEAPEST
+realization. The PATTERN itself is vendor-agnostic; on GitLab CI,
+Buildkite, Jenkins, or an internal scheduler, the same shape is
+buildable but SANDBOXING and CAPABILITY_GATING must be wired by
+hand (network policy + restricted service account + manual
+buffer-and-apply post-stage). The architect's job is to NAME the
+pattern, then surface the vendor cost in the design's portability
+declaration so the operator chooses with eyes open.
+
+ANTI-PATTERNS:
+- TOKEN-LAUNDERING -- the workflow grants the agent step a write
+  token to the system of record "because the post-stage is too
+  fiddly". The capability_gating substrate field is the WHOLE
+  POINT of A10; bypassing it reduces the design to A6 EVENT-DRIVEN
+  with extra ceremony. If the externalizer truly cannot express
+  the desired write, treat that as a missing capability of the
+  trigger surface and either extend the post-stage or re-classify
+  the work as in-session (A1/A2/A8 inside an interactive harness).
+- IMPLICIT-TRUST OUTER LOOP -- no audit surface; "the team will
+  notice if it goes wrong". A10's third guarantee is non-optional;
+  without AUDIT_SURFACE this is a clandestine bot and operators
+  cannot recover from misbehavior they cannot see.
+- OVER-BROAD TRIGGERS -- `on: push` (any branch, any path) when
+  the work is meaningful only on `main` for `docs/`. Tighten the
+  trigger declaration; every event the agent fires on is an event
+  it can misbehave on.
+- HARNESS-PORTABILITY THEATRE -- the design names A10 but pins
+  the inference harness to a single per-harness adapter without
+  justification. Substrate's orthogonality rule applies: if the
+  work could run under any A10-compatible harness, declare both
+  the trigger-surface adapter AND say "common-only" for the
+  per-harness axis.
+- INNER-LOOP MISCAST AS OUTER -- promoting a single-developer
+  laptop task to A10 because "governance sounds good". A10 pays
+  in trigger-surface lock-in; cash that cost only when the
+  governance properties are needed.
+- WEAK-FORM A9 INSIDE A STRONG-FORM SURFACE -- the workflow runs
+  on gh-aw but the agent body asks for a `gh` CLI call to comment.
+  The agent holds the token; CAPABILITY_GATING is bypassed by
+  design. Use `safe-outputs:` instead.
+
+SELECTION HEURISTIC: A10 is the right call when an outcome-framed
+operator prompt mentions ALL THREE of (a) an event or schedule
+that fires the work, (b) an external write target, and (c) a
+constraint on the agent's authority (audit, no-approve, no-merge,
+"must not hold token", "must be reviewable"). If only (a) and (b)
+are present without (c), A6 EVENT-DRIVEN is sufficient. If only
+(a) is present, the work is in-session reactive UI; use A1/A2/A8
+inside the inference harness directly.
 
 ---
 
@@ -524,7 +691,26 @@ task DAG is non-trivial; drift between waves is expensive?
   -> A5 WAVE EXECUTION
 
 work is reactive to events from outside the agent?
-  -> A6 EVENT-DRIVEN
+  STOP. First answer YES/NO to this gate:
+    Does the request also mention any of: audit / auditable /
+    compliance / sandbox / no-token / "must not hold" / capability-
+    gating / governed?
+    YES -> jump to A10 entry below FIRST. Co-name both if A10 fits.
+    NO  -> A6 EVENT-DRIVEN
+
+event-triggered AND must externalize AND agent authority must be
+bounded by audit + capability-gating + sandbox?
+  -> A10 GOVERNED OUTER LOOP (specialization of A6; mandatory
+     when ANY of: capability_gating, audit_surface, or sandboxing
+     is named in the request -- not all three required)
+  ALSO: A10's canonical strong-form realization is gh-aw on
+  GitHub. If the operator's substrate is NOT gh-aw (e.g. GitLab
+  CI, Azure Pipelines, Jenkins), the pattern is still A10 but
+  the handoff MUST flag the substrate gap explicitly: "A10
+  selected; canonical strong-form A9 (substrate-enforced
+  capability_gating) not available on <substrate>; degrade to
+  weak-form A9 with engineered token isolation and document the
+  residual risk." Do not pretend the gap does not exist.
 
 artifact is consequential and producer is biased by long context?
   -> A7 ADVERSARIAL REVIEW (always layer COLD READER for cold-
@@ -536,6 +722,9 @@ work is creative, multi-round, with goal-drift risk?
 work names a consequential side effect or a fact that must be true
 (deploy, migrate, delete, post, compute, verify a system fact)?
   -> A9 SUPERVISED EXECUTION (plan -> deterministic tool -> verify)
+  (prefer STRONG FORM when the trigger surface supports it; if
+   the request is also event-triggered, you already landed on A10
+   above and strong-form A9 is composed inside it)
 ```
 
 When two patterns fit, prefer the one that gives each thread a

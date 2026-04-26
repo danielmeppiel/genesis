@@ -41,6 +41,11 @@ name a countermeasure: the truth tells you which pattern is missing.
 |                                        |                                    | with explicit cutoff-aware fetch         |
 | (architectural) COMPOSITION            | tangled module graph; dup logic    | R1 SPLIT; R3 EXTRACT; module SoC pass    |
 | (architectural) PLAN BEFORE EXECUTION  | improvised execution; goal drift   | A1/A2/A4/A5 + B4 + A8 ALIGNMENT LOOP     |
+| (architectural) DISTRIBUTION HYGIENE   | BUNDLE LEAKAGE (maintainer-scope   | ship-time vs run-time scope split:       |
+|                                        | files inside user-facing module    | non-runtime assets live OUTSIDE the      |
+|                                        | -> PAYLOAD BLOAT + DISPATCH        | module entrypoint (contributor-only      |
+|                                        | CONTAMINATION); inverse of         | directory). See composition-substrate    |
+|                                        | PHANTOM DEPENDENCY                 | "Anti-patterns flagged at this step".    |
 
 Reviewer instruction: when flagging a design as missing a
 countermeasure, name BOTH the pattern AND the truth it serves. A

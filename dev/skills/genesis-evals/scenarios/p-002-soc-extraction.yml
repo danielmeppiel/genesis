@@ -1,0 +1,30 @@
+id: p-002-soc-extraction
+category: P
+description: >-
+  Refactor a bloated multi-purpose skill. With-genesis must invoke
+  R1 SPLIT or R3 EXTRACT explicitly. Without-genesis tends to merge
+  responsibilities or rename without splitting.
+prompt: |
+  I have a single skill called 'pr-helper' that does THREE things in one
+  SKILL.md: drafts PR descriptions, reviews diffs for security issues, and
+  generates release notes. It's 800 lines. Help me restructure it.
+model: claude-opus-4.7
+loaded_skills:
+  - genesis
+pass_gate:
+  type: substring_all
+  with_skill_must_contain:
+    - R1 SPLIT
+  with_skill_must_not_contain: []
+  without_skill_must_contain: []
+  without_skill_must_not_contain:
+    - R1 SPLIT
+    - R3 EXTRACT
+frozen_since: "0.1.0"
+retired_in: null
+notes: >-
+  With-half: genesis must invoke its codified pattern label R1 SPLIT --
+  this is the structured-decomposition verdict for a multi-purpose entry
+  point, distinct from generic 'split it up' prose. Without-half: the
+  base LLM may refactor but should not invent the R1/R3 codes (those are
+  skill-specific vocabulary).
