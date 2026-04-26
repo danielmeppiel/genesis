@@ -13,15 +13,27 @@
   <a href="https://github.com/danielmeppiel/genesis/commits/main"><img src="https://img.shields.io/github/last-commit/danielmeppiel/genesis?style=flat" alt="Last Commit"></a>
 </p>
 
-`CLAUDE.md`, `.cursor/rules/`, `.github/copilot-instructions.md`, `AGENTS.md` -- these files are the code that steers your AI coding agents. Genesis is a design discipline for that code: decomposition, contracts, and refactor moves -- plus two patterns with no classical counterpart, because LLM attention decays with distance.
+**Genesis is a design discipline for AI coding agents.** It names their primitives (personas, skills, rules, triggers), their patterns (multi-agent orchestration, attention anchoring), and the refactor moves when they drift.
 
 ## Install
+
+For most setups -- a single npx call, no global tooling required:
+
+```bash
+npx skills add danielmeppiel/genesis
+```
+
+Works with Claude Code, Cursor, Codex, OpenCode, GitHub Copilot, and 41+ more agents (see [skills.sh](https://skills.sh)). `skills` is an open, harness-agnostic CLI for installing agent skills.
+
+For teams already using [apm](https://github.com/microsoft/apm) (manifest + lockfile package manager for agent primitives):
 
 ```bash
 apm install danielmeppiel/genesis
 ```
 
-Genesis ships through [apm](https://github.com/microsoft/apm), a package manager for AI agent primitives. Adapters cover Claude Code, GitHub Copilot CLI, Cursor, OpenCode, and Codex (see [Runtimes](#runtimes)).
+Add `apm install microsoft/apm/packages/apm-guide` if you want genesis to emit `apm.yml` / lockfile vocabulary at codegen time.
+
+Both paths install the same SKILL.md plus its asset bundle. Pick one.
 
 ---
 
@@ -29,11 +41,11 @@ Genesis ships through [apm](https://github.com/microsoft/apm), a package manager
 
 If you've built anything non-trivial with AI coding agents, one of these has happened to you:
 
-- **The instruction file that grew teeth.** Your `CLAUDE.md` (or `.cursor/rules`, or `.github/copilot-instructions.md`) was forty lines. It is now four hundred. The agent ignores half of it and you cannot tell which half. (The prompt-sprawl anti-pattern.)
-- **Great at turn one, confidently wrong by turn twenty.** Early constraints slid out of attention as later notes piled up. Re-pasting holds for two turns, then drifts again.
-- **The same paragraph in four places.** A convention copy-pasted across a skill, an instruction file, and a slash command. You edited one of them last week. The agent now contradicts itself depending on which one fires.
+- **Monolithic instruction files.** The forty-line rule file became four hundred. There are no modules, no boundaries, no separation of concerns. Every change requires reading the whole thing, and the agent silently ignores the half it cannot fit in attention.
+- **Copy-paste duplication across primitives.** The same convention lives in three skills and two rule files. One was edited last week; the agent now contradicts itself depending on which path the harness loads first.
+- **Behavioral drift on long sessions.** Constraints that held at turn one are silently dropped by turn twenty. There is no contract, no acceptance check, no test at the boundary -- so the regression ships and you find out from the user.
 
-The industry sells "best practices" for AI coding agents -- prompt tips, rule-file templates, instruction snippets. What is missing is **architecture**: the named components, the seams between them, the patterns that govern their dynamics, the contracts at their boundaries, the refactor moves when they drift. Software engineering needed architecture, not just style guides, the moment systems crossed a complexity threshold. AI-coding-agent systems crossed that threshold a while ago. Genesis is the architectural layer that was missing.
+The industry sells "best practices" for AI coding agents -- prompt tips, rule-file templates, instruction snippets. What is missing is **architecture**: the named components, the seams between them, the patterns that govern their dynamics, the contracts at their boundaries, the refactor moves when they drift. Software engineering needed architecture, not just style guides, the moment systems crossed a complexity threshold. AI-coding-agent systems crossed that threshold a while ago. The downstream cost is paid by the developers using the agents you ship: poor UX, unreliable behavior, regressions that look like the model failing when in fact the system around the model has no architecture. Genesis is the architectural layer that was missing.
 
 ---
 
@@ -49,7 +61,7 @@ primitives, pattern, UML, acceptance, plan.
 
 You will get a named pattern, an execution-shape diagram, an acceptance test, and a written plan -- before any skill file is touched. That design output is what genesis produces.
 
-> **Claude Code shortcut:** `@genesis-architect Use genesis to design...`  For other harnesses, see [Runtimes](#runtimes).
+For harness-specific invocation shortcuts (e.g. `@genesis-architect` in Claude Code), see [Runtimes](#runtimes).
 
 <details>
 <summary>What does the genesis-architect persona look like?</summary>
@@ -187,8 +199,6 @@ The primitives are the same. Only the file names change.
 - [`SKILL.md`](SKILL.md) -- the skill itself; the eight-step process and progressive-disclosure protocol.
 - [`agents/genesis-architect.agent.md`](agents/genesis-architect.agent.md) -- the persona file.
 - [`assets/`](assets/) -- the loadable knowledge base (primitives, patterns, anti-patterns, refactor moves, runtime affordances).
-
-**Companion package.** Shipping APM modules? Add `apm install microsoft/apm/packages/apm-guide` for manifest vocabulary (`apm.yml`, lockfiles, CLI). Genesis stays deliberately ignorant of any one module system.
 
 ---
 
