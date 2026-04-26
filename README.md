@@ -235,6 +235,7 @@ The primitives are the same. Only the file names change.
 - [`skills/genesis/SKILL.md`](skills/genesis/SKILL.md) -- the skill itself; the eight-step process and progressive-disclosure protocol.
 - [`skills/genesis/agents/genesis-architect.agent.md`](skills/genesis/agents/genesis-architect.agent.md) -- the persona file.
 - [`skills/genesis/assets/`](skills/genesis/assets/) -- the loadable knowledge base (primitives, patterns, anti-patterns, refactor moves, runtime affordances).
+- [`dev/skills/genesis-evals/`](dev/skills/genesis-evals/) -- contributor-scope layout for maintainer-only primitives (eval scenarios) that must NOT ride into the published bundle. See `module-system-adapters/apm.md` "APM publish-time rules" for why.
 
 ---
 

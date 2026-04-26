@@ -29,10 +29,38 @@ truth for:
 - CLI surface (`apm install`, `apm pack`, `apm compile`, ...)
 - lockfile format and conflict resolution
 - plugin / hybrid authoring and export
+- package layout (`.apm/` source root, `dev/` for maintainer
+  assets) -- canonical reference:
+  https://danielmeppiel.github.io/awd-cli/introduction/anatomy-of-an-apm-package/
 
 `apm-usage` is published as the standalone `apm-guide` package and
 ships in the microsoft/apm repository. Add it as an external
 dependency to your project, or fetch its content directly.
+
+## APM publish-time rules
+
+APM's local-content scanner treats `.apm/skills/`, `.apm/agents/`,
+`.apm/instructions/`, and the other `.apm/<type>/` paths as
+PUBLISHABLE SOURCE ROOTS. Any primitive placed under those paths is
+included in the packed bundle regardless of whether it appears under
+`dependencies` or `devDependencies` in the manifest. The devDep
+marker controls RESOLUTION at install time (and stripping of REMOTE
+deps from `apm pack --format plugin` output), not PACKING of LOCAL
+sources at publish time.
+
+Coder consequence: a module shipping maintainer-only primitives
+(eval scenarios, contributor fixtures, dev scratch) MUST place them
+OUTSIDE `.apm/` -- e.g. `dev/skills/<module>-<role>/` -- and
+reference them via a local-path entry under `devDependencies.apm`.
+Otherwise they ride into the published bundle and trigger BUNDLE
+LEAKAGE (see `../composition-substrate.md`). The two failure shapes
+that follow are not theoretical:
+
+- PAYLOAD BLOAT: every consumer downloads the maintainer-only files.
+- DISPATCH CONTAMINATION: a maintainer-scope SKILL.md whose
+  description LOOKS LIKE a real user request will match the
+  dispatcher at the consumer site and pull contributor-only context
+  into the active session.
 
 ## Coder rules
 
