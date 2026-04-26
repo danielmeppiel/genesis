@@ -20,10 +20,14 @@ pass_gate:
     - Step 1
     - composition substrate
     - "design artifact"
-    - "primitive module"
+    - "R1 SPLIT"
+    - "A10 GOVERNED"
+    - "A1 PANEL"
 frozen_since: "0.1.0"
 retired_in: null
 notes: >-
-  Pure debugging task. Genesis description should not match. Any mention
-  of design steps / substrate / primitives indicates dispatch contamination
-  or over-eager activation.
+  Pure debugging task. Genesis description should not match. Forbidden
+  substrings are skill-internal vocabulary that ONLY appears when the skill
+  has activated (Step 1, codified pattern names, asset terms). Scope-naming
+  in a polite-decline ("genesis is for primitive modules, not relevant
+  here") is correct dispatch behavior and must not trip the gate.

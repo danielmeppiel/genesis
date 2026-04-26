@@ -14,7 +14,7 @@ loaded_skills:
 pass_gate:
   type: substring_all
   with_skill_must_contain:
-    - SoC
+    - R1 SPLIT
   with_skill_must_not_contain: []
   without_skill_must_contain: []
   without_skill_must_not_contain:
@@ -23,6 +23,8 @@ pass_gate:
 frozen_since: "0.1.0"
 retired_in: null
 notes: >-
-  With-half: genesis catalogue should produce R1/R3 labels OR an explicit
-  SoC pass naming the three responsibilities. Without-half: the LLM may
-  refactor but should not invent the R1/R3 codes.
+  With-half: genesis must invoke its codified pattern label R1 SPLIT --
+  this is the structured-decomposition verdict for a multi-purpose entry
+  point, distinct from generic 'split it up' prose. Without-half: the
+  base LLM may refactor but should not invent the R1/R3 codes (those are
+  skill-specific vocabulary).

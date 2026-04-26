@@ -206,6 +206,34 @@ matrix.
 3. Run `validate_scenarios.py`
 4. Land in the same PR as the genesis change it gates
 
+## Gate-authoring tips (lessons from RUN_ID=20260426T104629Z)
+
+- **Forbidden lists must target ACTIVATION vocabulary, not SCOPE
+  vocabulary.** A polite-decline response correctly names the
+  skill's scope ("genesis is for designing primitive modules
+  -- not relevant here"). Words like `primitive module` or
+  `agentic primitive` appear in BOTH activation AND decline,
+  so they fail to discriminate. Forbid only words that ONLY
+  appear on activation: `Step 1`, `composition substrate`,
+  `design artifact`, codified pattern labels (`R1 SPLIT`,
+  `A10 GOVERNED`, `A1 PANEL`).
+- **Required-substring lists must be one-of, not all-of, when
+  testing for "the catalogue produced ANY structured output".**
+  Demanding both `SoC` AND `R1 SPLIT` is over-specification.
+  Pick the single most discriminating label and require only
+  that. The scorer is `substring_all` (intersection); express
+  alternatives by minimising the set, not by enumerating
+  synonyms.
+- **The "without-genesis" half is NOT a clean baseline.** The
+  cwd contains genesis source files; sub-agents may read and
+  cite them. This is acceptable for gate evaluation (gates
+  are substring checks on SPECIFIC vocabulary), but do not
+  treat without-half responses as evidence of "what a fresh
+  LLM would do without the skill".
+- **File-naming MUST match scenario id exactly.** Saved
+  responses are read as `<scenario-id>__<half>.response.txt`.
+  Trailing slugs in filenames break the scorer silently.
+
 ## Retiring a scenario
 
 Set `retired_in: <version>`. The runner will skip it. NEVER delete

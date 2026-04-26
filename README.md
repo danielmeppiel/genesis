@@ -238,4 +238,4 @@ The primitives are the same. Only the file names change.
 
 ---
 
-**Apache 2.0 licensed.** Companion long-form book is CC BY-NC 4.0; this skill is permissive on purpose so it can load into any agent harness. If two failure modes above matched something you ship, [open an issue](https://github.com/danielmeppiel/genesis/issues/new) with which one -- that is the data that shapes the next pattern.
+**Apache 2.0 licensed.** Companion long-form book [The Agentic SDLC Handbook](https://danielmeppiel.github.io/agentic-sdlc-handbook/) is CC BY-NC 4.0; this skill is permissive on purpose so it can load into any agent harness. If two failure modes above matched something you ship, [open an issue](https://github.com/danielmeppiel/genesis/issues/new) with which one -- that is the data that shapes the next pattern.
