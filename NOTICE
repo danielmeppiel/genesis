@@ -1,0 +1,13 @@
+genesis
+Copyright 2025 Daniel Meppiel
+
+This product includes the genesis agent-skill: a design-discipline
+catalogue (primitives, design patterns, architectural patterns, refactor
+patterns) for AI-coding-agent systems, authored by Daniel Meppiel.
+
+The accompanying long-form treatment is published separately as a book
+under CC BY-NC 4.0. The book and this skill share intellectual lineage;
+this repository is licensed under Apache License 2.0 and is intended
+for unrestricted use, modification, and redistribution (including
+commercial) subject to the terms of that license, including the
+preservation of this NOTICE file in derivative works.
