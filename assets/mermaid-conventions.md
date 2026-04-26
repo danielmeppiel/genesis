@@ -117,7 +117,7 @@ Conventions:
   out by construction.
 
 Worked instances: see the diagrams in
-`worked-example-readme-iteration.md` for the canonical
+`examples/01-readme-iteration.md` for the canonical
 A8 + A1 + A7 + B9 + B10 composition rendered with these
 conventions.
 

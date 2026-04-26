@@ -18,52 +18,52 @@ cross-cutting concerns applied to workflows where LLMs are the runtime -- plus t
 classical architecture never needed, because attention degrades over distance and context windows
 are not memory.
 
-Install via [apm](https://github.com/microsoft/apm) (a package manager for AI agent primitives):
+## Install
 
 ```bash
 apm install danielmeppiel/genesis
 ```
 
-> **Recommended companion (when you ship modules through APM):** `apm install microsoft/apm/packages/apm-guide`. Genesis stays deliberately ignorant of manifest syntax (`apm.yml`, lockfiles, CLI commands); the companion supplies that vocabulary at codegen time. If you prefer a different module system, genesis will ask before emitting any manifest -- or fall back to raw-file output. See [Step 7b in SKILL.md](SKILL.md#step-7b---draft-natural-language-modules-caller-side).
+Genesis ships through [apm](https://github.com/microsoft/apm), a package manager for AI agent primitives. Adapters cover Claude Code, GitHub Copilot CLI, Cursor, OpenCode, and Codex (see [Runtimes](#runtimes)).
+
+> **Recommended companion when you ship modules through APM:** `apm install microsoft/apm/packages/apm-guide`. Genesis stays deliberately ignorant of manifest syntax (`apm.yml`, lockfiles, CLI commands); the companion supplies that vocabulary at codegen time. If you prefer a different module system, genesis will ask before emitting any manifest -- or fall back to raw-file output. See [Step 7b in SKILL.md](SKILL.md#step-7b---draft-natural-language-modules-caller-side).
 
 ---
 
-## Does this match anything you ship?
+## You've felt this
 
-- **The agent file that grew teeth.** Your `CLAUDE.md` (or `.cursor/rules`, or `.github/copilot-instructions.md`) was forty lines. It is now four hundred. The agent ignores half of it and you cannot tell which half. *(God Module: Single Responsibility violated from the first commit. No seam was named before writing began.)*
+If you've built anything non-trivial with AI coding agents, one of these has happened to you:
+
+- **The instruction file that grew teeth.** Your `CLAUDE.md` (or `.cursor/rules`, or `.github/copilot-instructions.md`) was forty lines. It is now four hundred. The agent ignores half of it and you cannot tell which half. *(No seam was named before writing began. Single Responsibility violated from the first commit.)*
 - **Great at turn one, confidently wrong by turn twenty.** The early constraints slid out of attention as the later notes piled up. Re-pasting holds for two turns, then drifts again. *(Attention decay: the failure mode with no classical analog. Tokens far from focus lose influence on inference; the constraint is in the file but no longer steers the output.)*
-- **The same paragraph in four places.** A convention copy-pasted across a skill, an instruction file, and a slash command. You edited one of them last week. The agent now contradicts itself depending on which one fires. *(Shotgun Surgery from hidden coupling. R3 EXTRACT -- promotes shared text to a module; dependents link to it. See [refactor-patterns.md](assets/refactor-patterns.md).)*
+- **The same paragraph in four places.** A convention copy-pasted across a skill, an instruction file, and a slash command. You edited one of them last week. The agent now contradicts itself depending on which one fires. *(Shotgun Surgery from hidden coupling. R3 EXTRACT promotes shared text to a module; dependents link to it. See [refactor-patterns.md](assets/refactor-patterns.md).)*
+- **You can't describe the shape you built.** You wired up agents, skills, rules, and slash commands until something worked. Now a teammate asks how it's structured and the only honest answer is "it grew." There is no vocabulary for the primitives you composed, no pattern you can name, no review you can run on your own design. *(The architectural void. The same situation software engineering was in before "architecture" was a teachable craft. The questions you would ask of any non-trivial system -- what are the components? where are the seams? which patterns govern the dynamics? where do contracts live? -- have no agreed answers in the AI-coding-agent world. So most people skip the questions.)*
 
 If two of these landed, keep reading.
 
 ---
 
-## Quick Start
+## The same skill, three prompts, three justified shapes
 
-After install, open the AI tool you use (Claude Code, Cursor, GitHub Copilot, etc.) and paste this prompt verbatim:
+Genesis answers those questions: it ports the architect's mental model to AI-coding-agent systems. Components, seams, patterns, contracts, refactor moves -- all named, all citable, all subject to a discipline you can run on your own designs.
 
-```
-Use the genesis-architect persona to design a skill that reviews my pull requests for missing
-tests, undocumented public API, and unsafe migrations. Apply the full architect's loop: goal,
-primitives, pattern, UML, acceptance, plan.
-```
+Here is what that looks like in practice. Three cold-load runs of the genesis skill, same skill loaded into a fresh context, three different operator prompts, three materially different (and justified) output architectures:
 
-You will get a structured design output: a named pattern, a description of the execution shape, and an acceptance criterion. That output is what genesis produces. The skill file comes after.
+| Operator prompt (excerpt) | Output shape | Patterns selected (and rejected) | Worked example |
+|---|---|---|---|
+| "Draft release notes from CHANGELOG entries" | 6 files: 1 skill + 2 assets + 3 scripts; single thread | A9 SUPERVISED EXECUTION + S7 BRIDGE + S4 SCHEMA GATE. A1 PANEL **rejected** (lens-count gate did not fire). | [examples/03](examples/03-release-notes-single-skill.md) |
+| "Review every PR: gather findings and present them" | 17 primitives: 6 personas + 4 assets + 3 scripts + trigger + entrypoint + rule + evals | A6 EVENT-DRIVEN + A1 PANEL + DISSENT-WEIGHTED arbiter. R1 SPLIT considered, applied at lens content as R3 EXTRACT instead. | [examples/04](examples/04-pr-review-advisory.md) |
+| "Review every PR: emit APPROVE or REJECT verdict" | 9 primitives + S7 deterministic bridges + S4 schema gate + post-emit verifier loop + graceful tool probes | Regime change: A9 + S7 + S4 hardened. A8 ALIGNMENT LOOP, B5 ESCALATION, R1 SPLIT all **considered and rejected with WHEN-clause grounding**. | [examples/05](examples/05-pr-review-verdict.md) |
 
-> **Claude Code shortcut:** `@genesis-architect Use genesis to design...`  For other harnesses, see [Runtimes](#runtimes).
+Notice row 3: removing the operator's "gather and present, never decide" constraint flipped the system from advisory to consequential. Genesis hardened the existing pipeline with deterministic bridges and a verifier loop -- it did NOT reach for new orchestration patterns. **That restraint is the discipline being demonstrated.** Most prompt-engineering tools never show their rejection logic, so you cannot tell whether a design is justified or arbitrary.
 
-<details>
-<summary>What does the genesis-architect persona look like?</summary>
-
-[Read the source: genesis-architect.agent.md](agents/genesis-architect.agent.md). A role declaration, the six loop steps as standing instructions, and a severity rubric per step -- not a vague "you are an expert" prompt.
-
-</details>
+Each example is the verbatim output of a fresh agent session that loaded only `SKILL.md` and the operator prompt. No prior context. No human cleanup.
 
 ---
 
 ## The architect's role, ported
 
-The six decisions a software architect makes map to agentic systems row for row. The code is Markdown; the runtime is an LLM; the structural failure modes are the same.
+The six decisions a software architect makes map to AI-coding-agent systems row for row. The code is Markdown; the runtime is an LLM; the structural failure modes are the same.
 
 | Classical concern | Agent-architect equivalent | Genesis deliverable |
 |---|---|---|
@@ -74,32 +74,7 @@ The six decisions a software architect makes map to agentic systems row for row.
 | Refactoring strategy | Identify drifted skills and conflicting instruction files; pay prompt debt | Skill refactor plan using R1-R4 patterns (see [refactor-patterns.md](assets/refactor-patterns.md)) |
 | Architecture review | Evaluate proposed designs for consistency; prevent prompt sprawl | PANEL pattern (multi-lens review) + severity-rubric compliance check |
 
----
-
-## What it produces
-
-A common ask:
-
-> *"Use the genesis-architect persona to design a skill that reviews my PRs -- checking for missing tests, undocumented public API, and unsafe migrations."*
-
-Genesis produces this **before** writing any file.
-
-**GOAL.** One reviewer that flags missing tests, undocumented public API, and unsafe migrations on a PR diff.
-
-**PRIMITIVES.**
-- `MODULE ENTRYPOINT` -- the `pr-review` skill itself.
-- `CHILD-THREAD SPAWN` x 3 -- one per lens (tests, docs, migrations), each in a fresh context window.
-- `PLAN PERSISTENCE` -- findings written to `pr-review.md` so a re-run on the same PR is comparable.
-
-**PATTERN.** **Master-Worker** (genesis name: FAN-OUT + SYNTHESIZER). The parent spawns one worker per lens, each in a fresh context window. Independent inquiries with no shared state should never compete in the same window -- later lenses inherit attention drift from earlier ones.
-
-The PR diff fans out to three threads (tests, docs, migrations), each in its own context window, then synthesizes back into `pr-review.md`.
-
-**ACCEPTANCE.** On a PR with one missing test, one undocumented export, and a benign migration: the output names exactly two findings (no false positive on the migration), each citing the file path.
-
-**PLAN.** `pr-review.md` written first. Only then does the agent author the skill, the persona, and the rule files.
-
-This output is what the architecture buys you. The file you eventually write is the easy part.
+What genesis produces is not the file you eventually write. It is the **structured handoff packet** that comes BEFORE the file: pattern citations with WHEN-clause justification, tradeoff resolutions citing pattern matrices, an SoC pass, a phantom-dependency check, and a portability check. The file you write afterward is the easy part.
 
 ---
 
@@ -167,6 +142,15 @@ Steps 6 and 7b are non-negotiable. They realize **PLAN MEMENTO** (state outside 
 | **Codex** | `AGENTS.md` files | `~/.codex/skills/` | [adapter](assets/runtime-affordances/per-harness/codex.md) |
 
 The primitives are the same. Only the file names change.
+
+---
+
+## Read more
+
+- [`examples/`](examples/) -- five worked designs with operator prompts, pattern reasoning, and considered-and-rejected alternatives.
+- [`SKILL.md`](SKILL.md) -- the skill itself; the eight-step process and progressive-disclosure protocol.
+- [`agents/genesis-architect.agent.md`](agents/genesis-architect.agent.md) -- the persona file.
+- [`assets/`](assets/) -- the loadable knowledge base (primitives, patterns, anti-patterns, refactor moves, runtime affordances).
 
 ---
 

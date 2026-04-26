@@ -59,7 +59,7 @@ flowchart LR
 ```
 
 REAL EXAMPLE: the `apm-review-panel` skill in `microsoft/apm`. See
-`worked-example-review-panel.md` for the senior-engineer cautionary
+`examples/02-review-panel-architecture.md` for the senior-engineer cautionary
 tale of getting this shape wrong.
 
 ANTI-PATTERNS:
@@ -324,7 +324,7 @@ reviewers (genesis-expert, narrative-arc, funnel) plus four
 contrarian developer personas (newcomer, skeptic, power user, OSS
 maintainer) reading every draft cold. The cold readers caught
 positioning failures that the specialists rated GO. See
-`worked-example-readme-iteration.md` for the full walkthrough.
+`examples/01-readme-iteration.md` for the full walkthrough.
 
 ANTI-PATTERNS:
 - COSMETIC DISSENT -- reviewers all rate "GO with minor edits" with

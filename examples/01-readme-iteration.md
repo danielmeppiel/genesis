@@ -7,7 +7,7 @@ canonical instance of A8 ALIGNMENT LOOP composed with A1 PANEL,
 A7 ADVERSARIAL REVIEW (with COLD READER SIMULATION), B9 GOAL
 STEWARD, and B10 HUMAN CHECKPOINT.
 
-This is a sister file to `worked-example-review-panel.md`. That one
+This is a sister file to `examples/02-review-panel-architecture.md`. That one
 covers the multi-lens code review case; this one covers the
 multi-round creative iteration case. They use overlapping patterns
 but very different stop conditions.
@@ -210,7 +210,7 @@ OVERREACH ships: the corpus's framing displaces the project's.
 ## When NOT to apply this template
 
 - Single-pass code generation. Use the A2 PIPELINE +
-  S4 VALIDATION DECORATOR shape from `worked-example-review-
+  S4 VALIDATION DECORATOR shape from `examples/02-review-
   panel.md` instead.
 - Information retrieval ("what does this code do?"). One thread,
   one persona is sufficient; this template is overkill.
@@ -226,5 +226,5 @@ OVERREACH ships: the corpus's framing displaces the project's.
   GROUNDED EXPERT BRIEFING, C6 EXTERNAL CORPUS GROUNDING
   (`design-patterns.md`)
 - Tradeoff matrices #2, #4, #5 (`pattern-tradeoffs.md`)
-- Sister case `worked-example-review-panel.md` for the
+- Sister case `examples/02-review-panel-architecture.md` for the
   code-review variant of multi-lens deliberation.

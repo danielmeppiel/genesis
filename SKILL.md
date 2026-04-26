@@ -439,18 +439,33 @@ patterns (system-topology shapes).
 
 ## Worked examples
 
-See `assets/worked-example-review-panel.md` for a worked
-re-architecture of a real panel from single-loop to fan-out +
-parent synthesizer. Use it as the canonical reference shape when
-designing any multi-lens code-review module.
+Worked examples ship in `examples/` at the repo root, not in
+`assets/`. They are LAZY: load only when the operator explicitly
+asks for an example or when a design step needs a reference shape
+to imitate. The progressive-disclosure rule for assets does NOT
+apply to examples; do not load them eagerly.
 
-See `assets/worked-example-readme-iteration.md` for a worked
-A8 ALIGNMENT LOOP (with A1 PANEL, A7 ADVERSARIAL REVIEW + COLD
-READER SIMULATION, B9 GOAL STEWARD, B10 HUMAN CHECKPOINT). Use it
-as the canonical reference shape for any creative, multi-round
-artifact work where cold-traffic conversion matters and goal
-drift is a real risk (READMEs, landing pages, PR descriptions,
-announcement posts).
+- `examples/01-readme-iteration.md` -- canonical shape for any
+  creative, multi-round artifact work where cold-traffic conversion
+  matters and goal drift is a real risk (READMEs, landing pages, PR
+  descriptions, announcement posts). Composes A8 ALIGNMENT LOOP +
+  A1 PANEL + A7 ADVERSARIAL REVIEW + COLD READER SIMULATION + B9
+  GOAL STEWARD + B10 HUMAN CHECKPOINT.
+- `examples/02-review-panel-architecture.md` -- canonical
+  re-architecture lesson for any multi-lens module (panel, audit,
+  multi-perspective critique). Walks one real panel from
+  single-loop anti-pattern to fan-out + parent synthesizer.
+- `examples/03-release-notes-single-skill.md` -- minimal output
+  reference: when A1 PANEL is NOT warranted (lens-count gate did
+  not fire). A9 SUPERVISED EXECUTION + S7 + S4, single thread.
+- `examples/04-pr-review-advisory.md` -- multi-primitive panel
+  reference: A6 EVENT + A1 PANEL + DISSENT-WEIGHTED arbiter, no
+  side effects on a system of record beyond comment posting.
+- `examples/05-pr-review-verdict.md` -- consequential-write
+  reference: same panel as 04 with verdict emission added. Shows
+  S7 + S4 + A9 verifier hardening, and explicitly rejects A8 /
+  B5 / R1 with WHEN-clause grounding -- read this when stake
+  pressure tempts you to add new orchestration layers.
 
 ## Outputs
 
