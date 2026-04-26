@@ -66,19 +66,19 @@ Cold-load the skill on the Quick Start prompt. Before writing a single file, the
 
 ```
 .github/skills/pr-review/
-|-- SKILL.md                       # entrypoint, 8-step contract
-|-- agents/
-|   |-- pr-tests-lens.agent.md     # missing-tests reviewer (fresh context)
-|   |-- pr-docs-lens.agent.md      # public-API doc reviewer
-|   |-- pr-migration-lens.agent.md # unsafe-migration reviewer
-|   `-- pr-synthesizer.agent.md    # arbiter, dissent-weighted
-|-- rules/
-|   `-- review-output.md           # auto-attached output schema
-|-- assets/
-|   |-- severity-rubric.md         # acceptance gate
-|   `-- findings.template.md       # plan persistence shape
-`-- triggers/
-    `-- on-pull-request.yml        # event binding
+├── SKILL.md                       # entrypoint, 8-step contract
+├── agents/
+│   ├── pr-tests-lens.agent.md     # missing-tests reviewer (fresh context)
+│   ├── pr-docs-lens.agent.md      # public-API doc reviewer
+│   ├── pr-migration-lens.agent.md # unsafe-migration reviewer
+│   └── pr-synthesizer.agent.md    # arbiter, dissent-weighted
+├── rules/
+│   └── review-output.md           # auto-attached output schema
+├── assets/
+│   ├── severity-rubric.md         # acceptance gate
+│   └── findings.template.md       # plan persistence shape
+└── triggers/
+    └── on-pull-request.yml        # event binding
 ```
 
 Then it justifies each piece against the genesis catalogue:
