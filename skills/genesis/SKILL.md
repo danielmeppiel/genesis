@@ -439,8 +439,8 @@ patterns (system-topology shapes).
 
 ## Worked examples
 
-Worked examples ship in `examples/` at the repo root, not in
-`assets/`. They are LAZY: load only when the operator explicitly
+Worked examples ship in `examples/` alongside this SKILL.md file,
+not in `assets/`. They are LAZY: load only when the operator explicitly
 asks for an example or when a design step needs a reference shape
 to imitate. The progressive-disclosure rule for assets does NOT
 apply to examples; do not load them eagerly.
