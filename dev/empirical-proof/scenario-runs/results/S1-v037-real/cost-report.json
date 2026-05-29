@@ -1,0 +1,38 @@
+{
+  "cell": "S1-v037",
+  "methodology": "REAL TELEMETRY harvested from cloud session_store events table (assistant.usage rows) for chat session 11a2b7d9-e032-4200-a0e3-0751e22ca52c. Costs computed against Anthropic published rates per dev/empirical-proof/scenario-runs/results/COSTING.md, with cache_read priced at 10% of input rate and cache_write at 125% of input rate (Anthropic standard).",
+  "chat_session_id": "11a2b7d9-e032-4200-a0e3-0751e22ca52c",
+  "total_cost_usd": 53.3555,
+  "total_calls": 92,
+  "per_model": [
+    {
+      "model": "claude-opus-4.7",
+      "input_tokens": 2422374,
+      "output_tokens": 16286,
+      "cache_read_tokens": 2230852,
+      "cache_write_tokens": 187567,
+      "calls": 23,
+      "cost_usd": 44.4202
+    },
+    {
+      "model": "claude-sonnet-4.6",
+      "input_tokens": 1878889,
+      "output_tokens": 3808,
+      "cache_read_tokens": 1609228,
+      "cache_write_tokens": 269627,
+      "calls": 28,
+      "cost_usd": 7.1877
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "input_tokens": 1402668,
+      "output_tokens": 11283,
+      "cache_read_tokens": 1273610,
+      "cache_write_tokens": 128936,
+      "calls": 41,
+      "cost_usd": 1.7476
+    }
+  ],
+  "pricing_source": "Anthropic published rates per dev/empirical-proof/scenario-runs/results/COSTING.md. Rates: opus-4.7 $15/$75/$1.50/$18.75 (in/out/cache_read/cache_write per Mtok); sonnet-4.6 $3/$15/$0.30/$3.75; haiku-4.5 $1/$5/$0.10/$1.25.",
+  "notes": "Architect ran on claude-opus-4.7 (per harness default for the genesis skill); 5 lens spawns ran on sonnet-4.6 (correctness/security/performance) and haiku-4.5 (style/test-coverage) per B12 MODEL ROUTER. The opus-4.7 cost (~$44) dominates total because the architect ingested the full v0.3.7 genesis skill (SKILL.md + composition-substrate + design-patterns + caveman-templates + audience-boundary), which is the load-bearing read for AUDIENCE BOUNDARY discipline. Spawn-side input is small per spawn but multiplied across reading the 2837-line PR diff. Direct A/B with v0.3.6 ($24.59) is not apples-to-apples because v0.3.6 ran on a mixed-model orchestrator including gpt-5.4; the more honest comparison is the per-spawn brief-payload size (NORMAL prose vs CAVEMAN_FULL) — see caveman-classification.md."
+}
