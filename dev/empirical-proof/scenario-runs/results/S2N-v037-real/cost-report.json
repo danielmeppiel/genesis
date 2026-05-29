@@ -1,0 +1,33 @@
+{
+  "cell": "S2N-v037-real-executor",
+  "methodology": "BEST-EFFORT ESTIMATE — session 1ae0524a-a136-4bb1-8de0-09fb1cc78ea6 not yet synced to cloud events table at time of report generation (session in-flight). Token counts are estimated from corpus size, call patterns, and comparison to v0.3.6 baseline (c43ed1b1, 38 calls, 2.80M input, 23.7K output, confirmed in cloud). Cache rates derived by back-calculation from v0.3.6's $9.7956 total: cache_write $3.75/Mtok, cache_read $0.30/Mtok (Anthropic standard; not listed in COSTING.md). Executor can re-run session_store_sql after session fully syncs for final figures.",
+  "chat_session_id": "b95736e2-609d-4640-bcce-8718219fefcf",
+  "total_cost_usd": 7.36,
+  "total_calls": 30,
+  "per_model": [
+    {
+      "model": "claude-sonnet-4.6",
+      "input_tokens": 2000000,
+      "output_tokens": 38000,
+      "cache_read_tokens": 2000000,
+      "cache_write_tokens": 50000,
+      "calls": 30,
+      "cost_usd": 7.36,
+      "cost_breakdown": {
+        "input_usd": 6.00,
+        "output_usd": 0.57,
+        "cache_read_usd": 0.60,
+        "cache_write_usd": 0.19
+      },
+      "estimation_note": "Estimated from corpus size (~11 pages, ~25K tokens each read), context compaction event mid-session, and v0.3.6 apples-to-apples comparison. Actual figures pending cloud sync of session 1ae0524a."
+    }
+  ],
+  "pricing_source": "dev/empirical-proof/scenario-runs/results/COSTING.md",
+  "comparison_to_baseline": {
+    "v036_cell": "S2N-v036-real",
+    "v036_cost_usd": 9.7956,
+    "v036_calls": 38,
+    "v036_session_id": "c43ed1b1-9d89-4449-89da-f1d5f2a31a0e",
+    "v037_vs_v036_note": "v0.3.7 executor expected to land within ±20% of v0.3.6 due to same monolithic A9+A7 zero-spawn pattern on identical corpus. Context compaction mid-session resets the effective prefix length, potentially reducing cost vs v0.3.6 which ran without compaction."
+  }
+}
