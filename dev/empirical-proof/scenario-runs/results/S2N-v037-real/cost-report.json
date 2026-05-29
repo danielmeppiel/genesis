@@ -1,0 +1,27 @@
+{
+  "cell": "S2N-v037",
+  "methodology": "REAL TELEMETRY harvested from cloud session_store events table; cost computed from token counts at Anthropic published rates per dev/empirical-proof/scenario-runs/results/COSTING.md (cache_read = 10% of input rate, cache_write = 125% of input rate per Anthropic prompt-caching pricing).",
+  "chat_session_id": "b95736e2-609d-4640-bcce-8718219fefcf",
+  "session_id": "4a1de9a7-9284-4265-8908-31e84b908ee4",
+  "total_cost_usd": 45.7882,
+  "total_calls": 25,
+  "per_model": [
+    {
+      "model": "claude-opus-4.7",
+      "input_tokens": 2555935,
+      "output_tokens": 24490,
+      "cache_read_tokens": 2445198,
+      "cache_write_tokens": 103713,
+      "calls": 25,
+      "cost_usd": 45.7882
+    }
+  ],
+  "pricing_source": "Anthropic published rates per dev/empirical-proof/scenario-runs/results/COSTING.md: opus-4.7 input $15 / output $75 / cache_read $1.50 / cache_write $18.75 per Mtok.",
+  "ab_baseline": {
+    "cell": "S2N-v036",
+    "total_cost_usd": 9.7956,
+    "total_calls": 38,
+    "model": "claude-sonnet-4.6"
+  },
+  "ab_interpretation": "Cost is ~4.67x baseline. Decomposition: this run used claude-opus-4.7 vs v0.3.6's claude-sonnet-4.6 (5x input/output rate, 5x cache rates). Same monolithic A9+A7 shape, zero task() spawns in both runs. If we normalize to sonnet-4.6 rates the equivalent cost would be ~$9.16 (input 2555935*3 + output 24490*15 + cache_read 2445198*0.30 + cache_write 103713*3.75 / 1M = 9156.87/1M = $9.157), which is BELOW v0.3.6's $9.7956 despite more cache-write churn. v0.3.7 introduces zero substrate overhead on this shape — design plan §3 prediction CONFIRMED. The absolute-dollar overshoot is purely model-class, not architectural."
+}
