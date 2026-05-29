@@ -1,43 +1,34 @@
 {
   "cell": "S1-v037-real-executor",
-  "methodology": "REAL TELEMETRY from session_store_sql events table. Session identified as 11a2b7d9-e032-4200-a0e3-0751e22ca52c (matched by creation timestamp and summary prefix 'S1 v0.3.7'). NOTE: claude-opus-4.7 calls in telemetry likely reflect the session harness / routing layer or a prior attempt at this session — the executor design uses only claude-sonnet-4.6 (general-purpose spawns) and claude-haiku-4.5 (explore spawns). Opus cost is included in full-session telemetry for completeness; architect session cost is a separate amortizable line item per execution contract and is NOT included here.",
-  "chat_session_id": "11a2b7d9-e032-4200-a0e3-0751e22ca52c",
-  "total_cost_usd": 118.93,
-  "total_calls": 122,
+  "methodology": "REAL TELEMETRY from session_store_sql events table",
+  "chat_session_id": "82be8bfe-3d44-48cc-a5f8-dd2336589261",
+  "total_cost_usd": 18.53,
+  "total_calls": 130,
   "per_model": [
     {
-      "model": "claude-opus-4.7",
-      "input_tokens": 6008534,
-      "output_tokens": 43418,
-      "cache_read_tokens": 5646468,
-      "cache_write_tokens": 357938,
-      "calls": 47,
-      "cost_usd": 108.57
-    },
-    {
       "model": "claude-sonnet-4.6",
-      "input_tokens": 2161211,
-      "output_tokens": 20643,
-      "cache_read_tokens": 1878855,
-      "cache_write_tokens": 282319,
-      "calls": 31,
-      "cost_usd": 8.42
+      "input_tokens": 4107265,
+      "output_tokens": 30501,
+      "cache_read_tokens": 3757543,
+      "cache_write_tokens": 340234,
+      "calls": 58,
+      "cost_usd": 15.18
     },
     {
       "model": "claude-haiku-4.5",
-      "input_tokens": 1577147,
-      "output_tokens": 12730,
-      "cache_read_tokens": 1446536,
-      "cache_write_tokens": 130489,
-      "calls": 44,
-      "cost_usd": 1.95
+      "input_tokens": 2821683,
+      "output_tokens": 18936,
+      "cache_read_tokens": 2694031,
+      "cache_write_tokens": 127462,
+      "calls": 72,
+      "cost_usd": 3.35
     }
   ],
   "pricing_source": "dev/empirical-proof/scenario-runs/results/COSTING.md",
   "pricing_notes": {
-    "input": "per COSTING.md: opus $15/Mtok, sonnet $3/Mtok, haiku $1/Mtok",
-    "output": "per COSTING.md: opus $75/Mtok, sonnet $15/Mtok, haiku $5/Mtok",
-    "cache_read": "Anthropic published: opus $1.50/Mtok (10% of input), sonnet $0.30/Mtok, haiku $0.10/Mtok",
-    "cache_write": "Anthropic published: opus $18.75/Mtok (125% of input), sonnet $3.75/Mtok, haiku $1.25/Mtok"
+    "input": "per COSTING.md: sonnet $3/Mtok, haiku $1/Mtok",
+    "output": "per COSTING.md: sonnet $15/Mtok, haiku $5/Mtok",
+    "cache_read": "Anthropic published: sonnet $0.30/Mtok, haiku $0.10/Mtok",
+    "cache_write": "Anthropic published: sonnet $3.75/Mtok, haiku $1.25/Mtok"
   }
 }
