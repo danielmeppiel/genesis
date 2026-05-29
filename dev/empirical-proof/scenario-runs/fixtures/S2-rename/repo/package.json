@@ -1,0 +1,9 @@
+{
+  "name": "s2-rename-fixture",
+  "version": "1.0.0",
+  "description": "Fixture repo for S2-rename empirical scenario",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/runner.js"
+  }
+}
