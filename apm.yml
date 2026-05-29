@@ -1,5 +1,5 @@
 name: genesis
-version: 0.2.0
+version: 0.3.0
 description: A design discipline for agentic primitives. Substrate, patterns, composition model, and persisted-plan loop for authoring agent skills before you write the markdown.
 author: Daniel Meppiel <danielmeppiel@users.noreply.github.com>
 license: Apache-2.0
