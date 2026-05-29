@@ -14,6 +14,40 @@ for this executor report).
 
 ---
 
+## Fixture reconstruction (reproducibility note)
+
+The `S2-rename/repo` entry on branch `empirical-proof-real-ab` is a
+gitlink (160000-mode, commit `953fa0d`) — a nested git repo whose
+objects are not stored in the parent repo's object store. In this
+worktree the directory was empty.
+
+**Reconstruction steps (verifiable):**
+
+1. Identified commit `af2cea4` ("S3-rename-v036: fix fixture embedded
+   git — track as plain files") which contains the fixture as 21 plain
+   files with `calculateTotal` already applied (post-rename).
+
+2. Checked out all 21 files from `af2cea4` into the worktree:
+   ```bash
+   git show af2cea4:dev/empirical-proof/scenario-runs/fixtures/S2-rename/repo/<file> > <dest>
+   ```
+
+3. Reverse-renamed `calculateTotal` → `computeTotal` using the same
+   word-boundary pattern to restore the original (pre-rename) state:
+   ```bash
+   grep -rl 'calculateTotal' . | xargs perl -i -pe 's/\bcalculateTotal\b/computeTotal/g'
+   ```
+
+4. Verified preconditions matched the architect's contract exactly:
+   - 20 files with `computeTotal`
+   - 62 total sites
+   - `node test/runner.js` → 41 passed, 0 failed
+
+The fixture was then committed as plain files on `danielmeppiel/s3-v037-executor`
+(same pattern as `af2cea4`), replacing the gitlink entry.
+
+---
+
 ## Result
 
 | Metric | Value |

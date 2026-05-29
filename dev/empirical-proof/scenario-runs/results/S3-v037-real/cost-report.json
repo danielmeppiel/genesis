@@ -1,41 +1,40 @@
 {
   "cell": "S3-v037-real",
-  "methodology": "REAL TELEMETRY NOTE: This executor session (cdab4b88-5437-48c1-9193-3e257c69801d) started at 2026-05-29T22:57:42Z. Cloud session_store events do not yet contain rows for this session — the store lags the live session. Telemetry sourced from session_store_sql confirms 0 rows for this session_id at reporting time. The estimate below uses the observed conversation size and the per-step token volumes from the parallel v037 Opus executor (session e787700c, execute-step rows) as a reference calibration.",
+  "methodology": "REAL TELEMETRY from session_store_sql. Cloud session_id resolved: local store reports cdab4b88-5437-48c1-9193-3e257c69801d; cloud store row matched by start timestamp (22:57:49 UTC) to session 41405aae-57ae-4e92-ae2b-39bc8d21fcc7. Query: SELECT usage_model, SUM(usage_input_tokens), SUM(usage_output_tokens), SUM(usage_cache_read_tokens), SUM(usage_cache_write_tokens), COUNT(*) FROM events WHERE session_id = '41405aae-57ae-4e92-ae2b-39bc8d21fcc7' AND usage_model IS NOT NULL GROUP BY usage_model. Harvested at 2026-05-29T23:10Z (19 events synced; 2-3 additional events from the re-harvest reply turn pending final sync).",
   "chat_session_id": "cdab4b88-5437-48c1-9193-3e257c69801d",
+  "cloud_session_id": "41405aae-57ae-4e92-ae2b-39bc8d21fcc7",
   "project_session_id": "1dedb0a1-bf98-4e6c-ae58-3d37c718e6a6",
-  "telemetry_source": "PENDING_CLOUD_SYNC — store lag at reporting time; reference calibration from v037 Opus execute-step (session e787700c, 9 calls, 933K input / 6.6K output / 923K cache_read)",
-  "total_cost_usd": 2.87,
-  "total_cost_usd_note": "Estimated at Sonnet-4.6 rates from reference step volumes. Actual will be available after session syncs to cloud store.",
-  "total_calls": 20,
+  "telemetry_source": "REAL — cloud session_store events table, 19 calls harvested",
+  "total_cost_usd": 7.108,
+  "total_calls": 19,
   "per_model": [
     {
       "model": "claude-sonnet-4.6",
-      "input_tokens": 933651,
-      "output_tokens": 6599,
-      "cache_read_tokens": 923513,
-      "cache_write_tokens": 10129,
-      "calls": 20,
-      "cost_usd": 2.87,
-      "cost_note": "Estimated from v037 Opus execute-step token volumes (same fixture, same task, same tool sequence) repriced at Sonnet-4.6 published rates: input $3.00/Mtok, output $15.00/Mtok, cache_read $0.30/Mtok, cache_write $3.75/Mtok. Actual call count slightly higher (includes handoff.md read, fixture setup, 4 deliverable writes, session_store queries)."
+      "input_tokens": 1908098,
+      "output_tokens": 22626,
+      "cache_read_tokens": 1758468,
+      "cache_write_tokens": 137899,
+      "calls": 19,
+      "cost_usd": 7.108
     }
   ],
   "cost_breakdown": {
-    "input_cost_usd": 2.80,
-    "output_cost_usd": 0.099,
-    "cache_read_cost_usd": 0.277,
-    "cache_write_cost_usd": 0.038,
-    "total_estimated_usd": 2.87
+    "input_cost_usd": 5.724,
+    "output_cost_usd": 0.339,
+    "cache_read_cost_usd": 0.528,
+    "cache_write_cost_usd": 0.517,
+    "total_usd": 7.108
   },
   "pricing_source": "Anthropic published rates per dev/empirical-proof/scenario-runs/results/COSTING.md. sonnet-4.6: input $3.00/Mtok, output $15.00/Mtok, cache_read $0.30/Mtok, cache_write $3.75/Mtok.",
   "ab_comparison": {
     "v036_baseline_usd": 10.399,
     "v036_model": "claude-sonnet-4.6",
     "v036_session_type": "single-session (architect+executor combined)",
-    "v037_executor_estimated_usd": 2.87,
+    "v037_executor_actual_usd": 7.108,
     "v037_model": "claude-sonnet-4.6",
     "v037_session_type": "executor-only (two-session pattern; architect cost separate)",
-    "delta_vs_v036_pct": -72.4,
-    "interpretation": "Executor-only cost is ~72% lower than v036 single-session cost. This is expected: the v036 session read the design patterns substrate and architected the solution inline; the v037 executor session receives a pre-digested handoff packet and only executes. The S7 shell path has zero variance regardless of session structure.",
+    "delta_vs_v036_pct": -31.6,
+    "interpretation": "Executor-only cost is $7.11 vs v036 single-session $10.40 (-31.6%). The executor context is larger than expected because it had to reconstruct the fixture from the post-rename plain files (reverse-rename + forward rename), adding git and bash tool calls not present in the original v036 run. The S7 rename itself is zero-variance; the cost difference is setup overhead only.",
     "architect_cost_note": "Architect session (Opus 4.7, session e787700c, 25 calls) cost $35.91 actual / $7.18 substrate-normalized (Sonnet rates). Architect cost is amortizable across all executor replay cells."
   },
   "architecture": {
