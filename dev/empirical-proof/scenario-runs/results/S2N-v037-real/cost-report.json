@@ -1,27 +1,26 @@
 {
   "cell": "S2N-v037-real-executor",
-  "methodology": "PARTIAL LOCAL TELEMETRY + ESTIMATION — session 16427e2b-c45b-4759-813d-03dfa11c84e2 was still active at report-generation time; cloud events table does not sync live sessions. calls (52) and output_tokens (43,700) are VERIFIED from local events.jsonl (assistant.message events). input_tokens, cache_read_tokens, cache_write_tokens are ESTIMATED from: (a) compaction metadata showing pre-compaction context = 135,968 tokens (systemTokens=9,884 + conversationTokens=84,526 + toolDefinitionsTokens=41,558), (b) v0.3.6 baseline ratio scaling, (c) standard Anthropic cache accounting. Cache rates: cache_write $3.75/Mtok, cache_read $0.30/Mtok (Anthropic standard; not listed in COSTING.md). pricing_source covers input/output only.",
+  "methodology": "REAL TELEMETRY from session_store_sql events table",
   "chat_session_id": "16427e2b-c45b-4759-813d-03dfa11c84e2",
-  "total_cost_usd": 8.23,
-  "total_calls": 52,
+  "events_table_session_id": "41405aae-57ae-4e92-ae2b-39bc8d21fcc7",
+  "session_id_note": "The harness chat session_id (16427e2b, from cross_session_message frame) does NOT equal the events table session_id (41405aae). Disambiguated by querying first user.message on 41405aae and matching the S2N-doc-audit handoff packet headline. Local events.jsonl call count (52) counted all tool invocations; events table calls (19) are billable LLM round-trips only.",
+  "total_cost_usd": 7.108,
+  "total_calls": 19,
   "per_model": [
     {
       "model": "claude-sonnet-4.6",
-      "input_tokens": 2200000,
-      "output_tokens": 43700,
-      "cache_read_tokens": 2600000,
-      "cache_write_tokens": 52000,
-      "calls": 52,
-      "cost_usd": 8.23,
+      "input_tokens": 1908098,
+      "output_tokens": 22626,
+      "cache_read_tokens": 1758468,
+      "cache_write_tokens": 137899,
+      "calls": 19,
+      "cost_usd": 7.108,
       "cost_breakdown": {
-        "input_usd": 6.60,
-        "output_usd": 0.6555,
-        "cache_read_usd": 0.78,
-        "cache_write_usd": 0.195
-      },
-      "verified_fields": ["calls", "output_tokens"],
-      "estimated_fields": ["input_tokens", "cache_read_tokens", "cache_write_tokens"],
-      "local_telemetry_source": "~/.copilot/session-state/16427e2b-c45b-4759-813d-03dfa11c84e2/events.jsonl"
+        "input_usd": 5.724,
+        "output_usd": 0.339,
+        "cache_read_usd": 0.528,
+        "cache_write_usd": 0.517
+      }
     }
   ],
   "pricing_source": "dev/empirical-proof/scenario-runs/results/COSTING.md",
@@ -30,6 +29,7 @@
     "v036_cost_usd": 9.7956,
     "v036_calls": 38,
     "v036_session_id": "c43ed1b1-9d89-4449-89da-f1d5f2a31a0e",
-    "v037_vs_v036_note": "v0.3.7 executor has 52 vs 38 calls (+37%) due to larger output (4 deliverables, richer per-finding prose) and a mid-session compaction. Estimated cost $8.23 vs v0.3.6 $9.7956 — within design plan §3 noise band, plausible given compaction resets prefix and reduces subsequent input costs."
+    "v037_vs_v036_delta": "-27.5%",
+    "v037_vs_v036_note": "v0.3.7 executor: $7.108 vs v0.3.6 $9.7956 at quality parity (8/10). 19 LLM calls vs 38. Cache discipline and zero spawns drove the cost reduction."
   }
 }
