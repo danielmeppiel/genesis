@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="branding/logo.svg" alt="genesis" width="180" />
+  <img src="branding/genesis-mascot-512.png" alt="genesis: a chartreuse blob in a hard hat holds up a STOP hand at a laptop while showing off an architecture blueprint" width="240" />
+</p>
+
+<p align="center">
+  <em>Put the keyboard down. Show me the diagram first.</em>
 </p>
 
 <h1 align="center">genesis</h1>
