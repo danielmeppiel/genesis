@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="branding/logo.svg" alt="genesis" width="180" />
+  <img src="branding/genesis-mascot-512.png" alt="genesis: a newborn sun unrolls the blueprint of a solar system while the galaxy behind it is still being built from dashed construction lines" width="240" />
+</p>
+
+<p align="center">
+  <em>Even the universe started with a diagram.</em>
 </p>
 
 <h1 align="center">genesis</h1>
